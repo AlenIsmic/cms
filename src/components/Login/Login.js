@@ -16,7 +16,6 @@ class Login extends React.Component {
         }
     }
 
-
     componentDidMount() {
     }
 
@@ -25,7 +24,7 @@ class Login extends React.Component {
 
     handleSubmit = e => {
         e.preventDefault();
-        this.props.history.push(routes.news.path);
+        //this.props.history.push(routes.news.path);
     };
 
     handleInput = e => {
