@@ -1,0 +1,66 @@
+.title{
+    margin-bottom: 20px;
+}
+
+.input{
+    border-radius: 0;
+    border-color: #707070;
+    height: 50px;
+    font-family: "Helvetica Neue LT Pro 55 Roman";
+    padding-top: 12px;
+    font-size: 17px;
+    color: #3C3C3C;
+    margin-bottom: 20px;
+    padding-left: 18px;
+    padding-right: 18px;
+}
+
+.password{
+    letter-spacing: 8px;
+}
+
+.password::placeholder{
+    letter-spacing: 1px !important;
+}
+
+.input::placeholder{
+    color:#D3D3D3;
+}
+
+.link{
+    font-size: 17px;
+}
+
+.label{
+    color: #3C3C3C;
+    line-height: 17px;
+    font-size: 17px;
+    margin-bottom: 5px;
+}
+
+.disclaimer{
+    color: #ADADAD;
+    font-size: 17px;
+    line-height: 20px;
+}
+
+.form{
+    margin-bottom: 40px;
+}
+
+
+
+.column-mid{
+    padding-right:10px;
+    padding-left: 10px;
+}
+.column-left{
+    padding-right:6px;
+}
+.column-right{
+    padding-left: 6px;
+}
+
+.column{
+    margin-bottom: 40px;
+}

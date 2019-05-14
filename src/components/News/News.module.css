@@ -1,0 +1,99 @@
+.gray-bar{
+    background-color: #707070;
+    height: 5px;
+    width: 100%;
+    margin-bottom:12px;
+}
+
+
+.partner-name{
+    font-family: "Helvetica Neue LT Pro 55 Roman";
+    color: #4CB4E7;
+    line-height: 20px;
+    font-weight: bold;
+    font-size: 17px;
+    margin-bottom: 20px;
+}
+
+.package-info {
+    font-family: "Helvetica Neue LT Pro 55 Roman";
+    color: #3C3C3C;
+    line-height: 20px;
+    font-weight: bold;
+    font-size: 17px;
+    margin-bottom: 3px;
+}
+
+.packages {
+    font-family: "Helvetica Neue LT Pro 55 Roman";
+    color: #3C3C3C;
+    line-height: 20px;
+    font-size: 17px;
+    margin-bottom: 10px;
+}
+
+.bottom-bar{
+    background-color: #707070;
+    height: 1px;
+    width: 100%;
+    margin-bottom: 7px;
+}
+
+.link-list{
+    color: #4CB4E7;
+    line-height: 20px;
+    font-size: 14px;
+}
+
+.link-list>a{
+    color: #4CB4E7;
+    line-height: 20px;
+    font-size: 14px;
+}
+
+.link-list>a:hover{
+    text-decoration: none;
+}
+
+.button{
+    background-color: #E2E2E2 !important;
+    border-radius: 0 !important;
+    border: 0;
+    font-family: "Helvetica Neue LT Pro 75 Bold";
+    font-size: 31px;
+    line-height:31px;
+    padding-bottom: 14px;
+    padding-top: 22px;
+    width:100%;
+}
+
+.button:focus{
+    -webkit-box-shadow: none;
+    -moz-box-shadow: none;
+    box-shadow: none;
+}
+
+
+.link-icon{
+    width: 22px;
+    height: 22px;
+    margin-right: 9px;
+    margin-bottom: 2px;
+}
+
+
+
+.column-mid{
+    padding-right:10px;
+    padding-left: 10px;
+}
+.column-left{
+    padding-right:6px;
+}
+.column-right{
+    padding-left: 6px;
+}
+
+.column{
+    margin-bottom: 40px;
+}

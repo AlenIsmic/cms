@@ -1,26 +1,36 @@
-import React from 'react';
-import logo from './logo.svg';
+import React, {Component, Fragment} from 'react';
 import './App.css';
+import 'bootstrap/dist/css/bootstrap.css';
+import {Redirect, Route, Switch} from "react-router";
+import {routes} from "./components/utility/routes";
+import News from './components/News/News';
+import Login from './components/Login/Login';
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+export const navigationRoutes = [
+    {
+        path: routes.login.path,
+        component: Login
+    },
+    {
+        path: routes.news.path,
+        component: News
+    }
+];
+
+class App extends Component {
+    render() {
+        return (
+            <Fragment>
+                <Switch>
+                    {navigationRoutes.map(navItem => {
+                        const TagName = navItem.component;
+                        return <Route key={navItem.path} exact path={navItem.path} component={TagName} />
+                    })}
+                    <Redirect to={routes.login.path} />
+                </Switch>
+            </Fragment>
+        );
+    }
 }
 
 export default App;
