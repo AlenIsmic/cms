@@ -6,4 +6,4 @@ export const apiClient: AxiosInstance = axios.create({
     withCredentials: true,
 });
 
-apiClient.defaults.headers.common = {'Authorization': `bearer ${AUTH_TOKEN}`}
+apiClient.defaults.headers.common = {'Authorization': `Token ${AUTH_TOKEN}`}
