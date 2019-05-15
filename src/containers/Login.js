@@ -1,30 +1,58 @@
 import React, {Fragment} from 'react';
+import './login.module.css';
+import {toast} from "react-toastify";
+import {connect} from 'react-redux';
+import {loginUser} from "../reducers/user";
+import {bindActionCreators} from "redux";
+import {replace} from 'connected-react-router';
 import {Col, Container, Input, Row} from "reactstrap";
 import * as classnames from "classnames";
 import {Link} from "react-router-dom";
-import {routes} from "../utility/routes";
-import style from "./Login.module.css";
+import style from "./login.module.css";
 import Button from "reactstrap/es/Button";
 
 class Login extends React.Component {
+
     constructor(props) {
         super(props);
-
         this.state = {
-            username: "",
-            password: ""
+            username: '',
+            password: '',
+            data: null
+        };
+    }
+
+    componentWillMount() {
+        if (this.props.user.first_name !== undefined){
+            this.props.replace('/');
         }
     }
 
-    componentDidMount() {
-    }
-
     componentDidUpdate() {
+        if (this.props.user.first_name !== undefined){
+            this.props.replace('/');
+        }
     }
 
-    handleSubmit = e => {
+    success = (message) => toast.info(message);
+
+    failure = (message) => toast.error(message);
+
+    handleLogin = async (e) => {
         e.preventDefault();
-        //this.props.history.push(routes.news.path);
+        const data = {...this.state.data};
+        var obj = {};
+        obj['username'] = this.state.username;
+        obj['password'] = this.state.password;
+        console.log(this.props.loginUser);
+        console.log(this.props);
+        try {
+            await this.props.loginUser(obj);
+            this.success("Logged in");
+            this.props.replace('/');
+        } catch (e) {
+            this.failure(e.toString());
+        }
     };
 
     handleInput = e => {
@@ -40,7 +68,7 @@ class Login extends React.Component {
                 <Row>
                     <Col className={classnames(style["column-left"], style.column)} sm={4} />
                     <Col className={classnames(style["column-mid"], style.column)} sm={4}>
-                        <form className={style.form} onSubmit={(e) => this.handleSubmit(e)}>
+                        <form className={style.form} onSubmit={(e) => this.handleLogin(e)}>
                             <div>
                                 <label className={style.label}>Benutzername</label>
                                 <Input onChange={(e) => this.handleInput(e)} value={username}
@@ -75,4 +103,10 @@ class Login extends React.Component {
 
 }
 
-export default Login;
+const mapState = state => ({
+    ...state.user,
+});
+
+const mapActions = dispatch => bindActionCreators({loginUser, replace}, dispatch);
+
+export default connect(mapState, mapActions)(Login);

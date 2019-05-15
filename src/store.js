@@ -6,7 +6,7 @@ import thunk from "redux-thunk";
 import {createBrowserHistory} from "history";
 //import {connectRouter, routerMiddleware} from "connected-react-router";
 import {routerMiddleware} from "connected-react-router";
-import reducers from "./redux";
+import reducers from "./reducers";
 
 const logger = createLogger({
     collapsed: true,
