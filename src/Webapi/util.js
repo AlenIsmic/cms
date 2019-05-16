@@ -1,9 +1,7 @@
 import axios, {AxiosInstance} from "axios";
-import {API_URL, AUTH_TOKEN} from "../config";
+import {API_URL} from "../config";
 
 export const apiClient: AxiosInstance = axios.create({
     baseURL: API_URL,
-    withCredentials: true,
+    withCredentials: true
 });
-
-apiClient.defaults.headers.common = {'Authorization': `Token ${AUTH_TOKEN}`}

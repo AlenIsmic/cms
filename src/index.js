@@ -4,10 +4,10 @@ import './index.css';
 import App from './App';
 import * as serviceWorker from './serviceWorker';
 import {Router} from "react-router";
-import store, {history} from "./store";
+import configureStore, {history} from "./store";
 import {Provider} from "react-redux";
 
-const initStore = store();
+const initStore = configureStore();
 
 
 ReactDOM.render(

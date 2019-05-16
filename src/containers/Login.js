@@ -2,14 +2,15 @@ import React, {Fragment} from 'react';
 import './login.module.css';
 import {toast} from "react-toastify";
 import {connect} from 'react-redux';
-import {loginUser} from "../reducers/user";
+import {loginUser, getUser} from "../reducers/user";
 import {bindActionCreators} from "redux";
 import {replace} from 'connected-react-router';
 import {Col, Container, Input, Row} from "reactstrap";
 import * as classnames from "classnames";
-import {Link} from "react-router-dom";
+import {Link, Redirect} from "react-router-dom";
 import style from "./login.module.css";
 import Button from "reactstrap/es/Button";
+import PropTypes from "prop-types";
 
 class Login extends React.Component {
 
@@ -18,36 +19,25 @@ class Login extends React.Component {
         this.state = {
             username: '',
             password: '',
-            data: null
         };
     }
 
-    componentWillMount() {
-        if (this.props.user.first_name !== undefined){
-            this.props.replace('/');
-        }
-    }
+    static propTypes = {
+        loginUser: PropTypes.func.isRequired,
+        isAuthenticated: PropTypes.bool
+    };
 
-    componentDidUpdate() {
-        if (this.props.user.first_name !== undefined){
-            this.props.replace('/');
-        }
-    }
-
-    success = (message) => toast.info(message);
+    success = (message) => toast.success(message);
 
     failure = (message) => toast.error(message);
 
-    handleLogin = async (e) => {
+    onSubmit = async (e) => {
         e.preventDefault();
         const data = {...this.state.data};
-        var obj = {};
-        obj['username'] = this.state.username;
-        obj['password'] = this.state.password;
         console.log(this.props.loginUser);
         console.log(this.props);
         try {
-            await this.props.loginUser(obj);
+            await this.props.loginUser(this.state);
             this.success("Logged in");
             this.props.replace('/');
         } catch (e) {
@@ -55,12 +45,20 @@ class Login extends React.Component {
         }
     };
 
-    handleInput = e => {
-        const key = e.target.name;
-        this.setState({ [key]: e.target.value });
-    };
+    // onSubmit = e => {
+    //     e.preventDefault();
+    //     this.props.loginUser({this.state.username, this.state.password});
+    // };
+
+    onChange = e => this.setState({ [e.target.name]: e.target.value });
+
 
     render() {
+        console.log(this);
+
+        if (this.props.isAuthenticated) {
+            return <Redirect to="/" />;
+        }
         const {username, password} = this.state;
         return <Fragment>
             <Container className="content">
@@ -68,16 +66,16 @@ class Login extends React.Component {
                 <Row>
                     <Col className={classnames(style["column-left"], style.column)} sm={4} />
                     <Col className={classnames(style["column-mid"], style.column)} sm={4}>
-                        <form className={style.form} onSubmit={(e) => this.handleLogin(e)}>
+                        <form className={style.form} onSubmit={(e) => this.onSubmit(e)}>
                             <div>
                                 <label className={style.label}>Benutzername</label>
-                                <Input onChange={(e) => this.handleInput(e)} value={username}
+                                <Input onChange={(e) => this.onChange(e)} value={username}
                                        placeholder={"Benutzername / E-Mail-Adresse"} className={style.input} name={"username"} />
                             </div>
                             <div>
 
                                 <label className={style.label}>Password</label>
-                                <Input onChange={(e) => this.handleInput(e)} value={password}
+                                <Input onChange={(e) => this.onChange(e)} value={password}
                                        placeholder={"Passwort"} className={classnames(style.input, style.password)} type={"password"} name={"password"} />
                             </div>
                             <div className="d-flex justify-content-between align-items-start">
@@ -99,14 +97,15 @@ class Login extends React.Component {
                 </Row>
             </Container>
         </Fragment>
+
     };
 
 }
 
 const mapState = state => ({
-    ...state.user,
+    isAuthenticated: state.user.isAuthenticated
 });
 
-const mapActions = dispatch => bindActionCreators({loginUser, replace}, dispatch);
+const mapActions = dispatch => bindActionCreators({loginUser, getUser, replace}, dispatch);
 
 export default connect(mapState, mapActions)(Login);

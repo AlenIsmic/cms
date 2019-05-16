@@ -5,7 +5,7 @@ import thunk from "redux-thunk";
 //import createHistory from 'history/createBrowserHistory'
 import {createBrowserHistory} from "history";
 //import {connectRouter, routerMiddleware} from "connected-react-router";
-import {routerMiddleware} from "connected-react-router";
+import {connectRouter, routerMiddleware} from "connected-react-router";
 import reducers from "./reducers";
 
 const logger = createLogger({
@@ -21,12 +21,11 @@ const middleware = applyMiddleware(routerMiddleware(history), promise, thunk, lo
 
 export default function configureStore(preloadedState){
     const store = createStore(
-        reducers(history),
-        preloadedState,
-        compose(
-            middleware
-        )
+        connectRouter(history)(reducers),
+        middleware
     );
 
     return store;
 }
+
+// const store = configureStore();
