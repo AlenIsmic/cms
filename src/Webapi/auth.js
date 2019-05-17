@@ -6,8 +6,10 @@ const config = {
     }
 };
 
+const mainUrl = 'https://api.digitalx.prontoweb.org';
+
 export default {
-    loginUser: (data) => apiClient.post('/auth/login/json/', data, config)
+    loginUser: (data) => apiClient.post(mainUrl+'/auth/login/json/', data, config)
 }
 
 export const tokenConfig = getState => {

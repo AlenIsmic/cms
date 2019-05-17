@@ -14,7 +14,7 @@ class Header extends React.Component {
 
         return <Container>
             <div className={classnames("d-flex")}>
-                <img className="logo" src="http://skyleet.com/images/newlogo.png" />
+                <img style={{width: '30px', height: '30px'}} className="logo" src="http://skyleet.com/images/newlogo.png" />
             </div>
         </Container>
     };
