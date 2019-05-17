@@ -11,6 +11,9 @@ import {Link, Redirect} from "react-router-dom";
 import style from "./login.module.css";
 import Button from "reactstrap/es/Button";
 import PropTypes from "prop-types";
+import {withRouter} from "react-router-dom";
+import {history} from "../store";
+import {isEmpty} from "../util"
 
 class Login extends React.Component {
 
@@ -24,8 +27,21 @@ class Login extends React.Component {
 
     static propTypes = {
         loginUser: PropTypes.func.isRequired,
-        isAuthenticated: PropTypes.bool
+        getUser: PropTypes.func.isRequired,
+        user: PropTypes.object,
+        token: PropTypes.string
     };
+
+    async componentDidMount() {
+        await this.props.getUser();
+        // console.log("Login Mount");
+        console.log("Login Mount");
+        console.log(this.props.user);
+
+        if(!isEmpty(this.props.user)) {
+            this.props.replace('/');
+        }
+    }
 
     success = (message) => toast.success(message);
 
@@ -34,8 +50,6 @@ class Login extends React.Component {
     onSubmit = async (e) => {
         e.preventDefault();
         const data = {...this.state.data};
-        console.log(this.props.loginUser);
-        console.log(this.props);
         try {
             await this.props.loginUser(this.state);
             this.success("Logged in");
@@ -54,11 +68,6 @@ class Login extends React.Component {
 
 
     render() {
-        console.log(this);
-
-        if (this.props.isAuthenticated) {
-            return <Redirect to="/" />;
-        }
         const {username, password} = this.state;
         return <Fragment>
             <Container className="content">
@@ -66,7 +75,7 @@ class Login extends React.Component {
                 <Row>
                     <Col className={classnames(style["column-left"], style.column)} sm={4} />
                     <Col className={classnames(style["column-mid"], style.column)} sm={4}>
-                        <form className={style.form} onSubmit={(e) => this.onSubmit(e)}>
+                        <form className={style.form} onSubmit={this.onSubmit}>
                             <div>
                                 <label className={style.label}>Benutzername</label>
                                 <Input onChange={(e) => this.onChange(e)} value={username}
@@ -102,9 +111,14 @@ class Login extends React.Component {
 
 }
 
-const mapState = state => ({
-    isAuthenticated: state.user.isAuthenticated
-});
+function mapState(state){
+    console.log("Login");
+    console.log(state);
+    return {
+        user: state.user.user,
+        token: state.user.token
+    }
+}
 
 const mapActions = dispatch => bindActionCreators({loginUser, getUser, replace}, dispatch);
 

@@ -7,12 +7,12 @@ const config = {
 };
 
 export default {
-    loginUser: (data) => apiClient.post('/auth/login/json/', data, config),
+    loginUser: (data) => apiClient.post('/auth/login/json/', data, config)
 }
 
 export const tokenConfig = getState => {
     // Get token from state
-    const token = getState().auth.token;
+    const token = getState().user.token;
 
     // Headers
     const config = {
