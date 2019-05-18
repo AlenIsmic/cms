@@ -15,13 +15,13 @@ export default function (state = initState, action) {
         case "LOGOUT_USER":
             localStorage.removeItem("token");
             localStorage.removeItem("user");
-            return {...state, token: null, user: {}, isLoading: false};
+            return {...state, token: "", user: {}, isLoading: false};
         case pending("LOGIN_USER"):
             return pendingState(state);
         case fulfilled("LOGIN_USER"):
             localStorage.setItem("token", action.payload.data.token);
             localStorage.setItem("user", JSON.stringify(action.payload.data.user));
-            return {...state, ...action.payload, isLoading: false};
+            return {...state, ...action.payload, token: action.payload.data.token, user: action.payload.data.user, isLoading: false};
         case "CLEAR_USER":
             return initState;
         default:

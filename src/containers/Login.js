@@ -32,17 +32,6 @@ class Login extends React.Component {
         token: PropTypes.string
     };
 
-    async componentDidMount() {
-        await this.props.getUser();
-        // console.log("Login Mount");
-        console.log("Login Mount");
-        console.log(this.props.user);
-
-        if(!isEmpty(this.props.user)) {
-            this.props.replace('/');
-        }
-    }
-
     success = (message) => toast.success(message);
 
     failure = (message) => toast.error(message);

@@ -22,21 +22,12 @@ class News extends React.Component {
 
     }
 
-    componentDidMount() {
-        // this.props.getUser();
-
-        if(isEmpty(this.props.user)) {
-            this.props.replace('/login');
-        }
-    }
-
     logout = async () => {
         console.log(this.props);
         this.props.logoutUser();
         this.props.clearUser();
         this.props.replace('/login');
     };
-
 
     render() {
         const { user, users } = this.state;
@@ -56,7 +47,8 @@ class News extends React.Component {
 
 function mapState(state){
     return {
-        user: state.user.user
+        user: state.user.user,
+        token: state.user.token
     }
 }
 
@@ -64,4 +56,4 @@ function mapActions(dispatch) {
     return bindActionCreators({getUser, logoutUser, clearUser, replace}, dispatch)
 }
 
-export default withRouter(connect(mapState, mapActions)(News));
+export default connect(mapState, mapActions)(News);

@@ -4,6 +4,7 @@ import './index.css';
 import App from './App';
 import * as serviceWorker from './serviceWorker';
 import {Router} from "react-router";
+// import {ConnectedRouter} from "connected-react-router";
 import configureStore, {history} from "./store";
 import {Provider} from "react-redux";
 
