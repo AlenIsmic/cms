@@ -16,20 +16,28 @@ import {connect} from "react-redux";
 import {bindActionCreators} from "redux";
 
 class App extends Component {
+
+    state = {
+        firstLoad: true,
+    };
+
     async componentDidMount() {
         await this.props.getUser();
 
         console.log("App Mount");
         console.log(this.props.user);
+
+        this.setState({firstLoad: false});
     }
 
     render() {
+        const {firstLoad} = this.state;
         return (
             <Fragment>
                 <Header/>
                 <ToastContainer/>
                 {
-                    isEmpty(this.props.user) ?
+                    isEmpty(this.props.user) && !firstLoad ?
                     <Switch>
                         <Route exact path={routes.login} component={Login}/>
                         <Redirect to={routes.login}/>
@@ -49,8 +57,7 @@ function mapState(state) {
     console.log("App");
     console.log(state);
     return {
-        user: state.user.user,
-        token: state.user.token
+        user: state.user.user
     }
 }
 

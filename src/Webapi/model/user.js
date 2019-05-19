@@ -1,8 +1,6 @@
-// @flow
-
 export type UserGroup = {
     name: string
-}
+};
 
 export type User = {
     username: string,
@@ -10,4 +8,4 @@ export type User = {
     last_name: string,
     email: string,
     groups: Array<UserGroup>,
-}
+};

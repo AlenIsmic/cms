@@ -28,8 +28,7 @@ class Login extends React.Component {
     static propTypes = {
         loginUser: PropTypes.func.isRequired,
         getUser: PropTypes.func.isRequired,
-        user: PropTypes.object,
-        token: PropTypes.string
+        user: PropTypes.object
     };
 
     success = (message) => toast.success(message);
@@ -104,8 +103,7 @@ function mapState(state){
     console.log("Login");
     console.log(state);
     return {
-        user: state.user.user,
-        token: state.user.token
+        user: state.user.user
     }
 }
 

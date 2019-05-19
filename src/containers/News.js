@@ -5,6 +5,7 @@ import * as classnames from "classnames";
 import {replace} from "connected-react-router";
 import {connect} from "react-redux";
 import {getUser, logoutUser, clearUser} from "../reducers/user";
+import {loadNews, getNews, deleteNews} from "../reducers/news";
 import {bindActionCreators} from "redux";
 import {history} from "../store";
 import {withRouter} from "react-router-dom";
@@ -17,9 +18,16 @@ class News extends React.Component {
 
         this.state = {
             user: {},
-            users: []
+            news: []
         }
 
+    }
+
+    async componentDidMount(){
+        await this.props.loadNews();
+
+        console.log("News Mount");
+        console.log(this.props);
     }
 
     logout = async () => {
@@ -30,10 +38,17 @@ class News extends React.Component {
     };
 
     render() {
-        const { user, users } = this.state;
         return <Fragment>
             <Container className="content">
                 <h1 className={classnames("heading-1")}>News</h1>
+                <ul>
+                {this.props.news.map(news =>
+                    <li key={news.url}>
+                        <div>{ news.url }</div>
+                        <img src={news.image} alt="" width={500} height={300}/>
+                    </li>
+                )}
+                </ul>
                 <div>
                     <Button className={classnames(style['button'])} onClick={this.logout}>
                         Back to login
@@ -46,14 +61,16 @@ class News extends React.Component {
 }
 
 function mapState(state){
+    console.log("News");
+    console.log(state);
     return {
         user: state.user.user,
-        token: state.user.token
+        news: state.news.news
     }
 }
 
 function mapActions(dispatch) {
-    return bindActionCreators({getUser, logoutUser, clearUser, replace}, dispatch)
+    return bindActionCreators({getUser, logoutUser, clearUser, loadNews, getNews, deleteNews, replace}, dispatch)
 }
 
 export default connect(mapState, mapActions)(News);

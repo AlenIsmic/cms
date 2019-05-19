@@ -48,8 +48,7 @@ function mapState(state){
     console.log("Home");
     console.log(state);
     return {
-        user: state.user.user,
-        token: state.user.token
+        user: state.user.user
     }
 }
 
