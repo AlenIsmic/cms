@@ -60,4 +60,5 @@ export const routes = {
     "home":"/",
     "login":"/login",
     "news":"/news",
+    "news_add": "/newsadd",
 };

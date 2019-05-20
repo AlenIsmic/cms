@@ -14,6 +14,7 @@ import { ToastContainer } from 'react-toastify';
 import {routes, isEmpty} from './util';
 import {connect} from "react-redux";
 import {bindActionCreators} from "redux";
+import NewsAdd from "./containers/NewsAdd";
 
 class App extends Component {
 
@@ -45,6 +46,7 @@ class App extends Component {
                     : <Switch>
                         <Route exact path={routes.home} component={Home}/>
                         <Route exact path={routes.news} component={News}/>
+                        <Route exact path={routes.news_add} component={NewsAdd}/>
                         <Redirect to={routes.home}/>
                     </Switch>
                 }
