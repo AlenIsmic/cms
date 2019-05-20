@@ -10,6 +10,8 @@ import News from "./containers/News";
 import configureStore from "./store"
 import PrivateRoute from "./components/utility/PrivateRoute"
 import { getUser, loginUser, clearUser, logoutUser } from "./reducers/user"
+import { loadNewsCategories } from "./reducers/news"
+import { setError } from "./reducers/auth"
 import { ToastContainer } from 'react-toastify';
 import {routes, isEmpty} from './util';
 import {connect} from "react-redux";
@@ -22,22 +24,40 @@ class App extends Component {
     };
 
     async componentDidMount() {
-        await this.props.getUser();
-
         console.log("App Mount");
-        console.log(this.props.user);
-
+        try {
+            await this.props.getUser();
+            await this.props.loadNewsCategories();
+        }
+        catch (e) {
+            console.log(e);
+        }
         this.setState({firstLoad: false});
+    }
+
+    async componentDidUpdate(newProps) {
+        console.log("UPdate",this.props.auth.error);
+        console.log("Props", newProps.auth.error);
+        console.log("Test", newProps);
+        if (this.props.news.error !== newProps.news.error){
+            if(true) {
+                await this.props.logoutUser();
+                await this.props.clearUser();
+                await this.props.setError(null);
+                this.props.replace(routes.login);
+            }
+        }
     }
 
     render() {
         const {firstLoad} = this.state;
+        console.log("firstLoad", firstLoad);
         return (
-            <Fragment>
+            !firstLoad && <Fragment>
                 <Header/>
                 <ToastContainer/>
                 {
-                    isEmpty(this.props.user) && !firstLoad ?
+                    isEmpty(this.props.user) ?
                     <Switch>
                         <Route exact path={routes.login} component={Login}/>
                         <Redirect to={routes.login}/>
@@ -57,12 +77,14 @@ function mapState(state) {
     console.log("App");
     console.log(state);
     return {
-        user: state.user.user
+        user: state.user.user,
+        news: state.news,
+        auth: state.auth
     }
 }
 
 function mapActions(dispatch) {
-    return bindActionCreators({ getUser, clearUser, loginUser, logoutUser, replace }, dispatch);
+    return bindActionCreators({ getUser, clearUser, loginUser, logoutUser, loadNewsCategories, setError, replace }, dispatch);
 }
 
 export default connect(mapState, mapActions)(App);

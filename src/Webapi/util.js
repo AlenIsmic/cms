@@ -1,26 +1,15 @@
 import axios, {AxiosInstance} from "axios";
 import {API_URL} from "../config";
+import {isEmpty} from "../util";
 
 export const apiClient: AxiosInstance = axios.create({
     baseURL: API_URL,
     withCredentials: true
 });
 
-export const tokenConfig = () => {
-    // Get token from state
-    const token = localStorage.getItem("token");
-
-    // Headers
-    const config = {
+export const tokenConfig = {
         headers: {
-            "Content-Type": "application/json"
+            "Content-Type": "application/json",
+            "Authorization": `Token ${isEmpty(localStorage.getItem("token")) ? '' : localStorage.getItem("token")}`
         }
-    };
-
-    // If token, add to headers config
-    if (token) {
-        config.headers["Authorization"] = `Token ${token}`;
-    }
-
-    return config;
 };

@@ -1,5 +1,5 @@
 import {fulfilled, pending, pendingState, rejected, rejectedState} from "./util";
-import auth from "../Webapi/auth";
+import user from "../Webapi/user";
 
 const initState = {
     user: null,
@@ -21,7 +21,7 @@ export default function (state = initState, action) {
             localStorage.setItem("user", JSON.stringify(action.payload.data.user));
             return {...state, user: action.payload.data.user, isLoading: false};
         case rejected("LOGIN_USER"):
-            return {...state, isLoading: false};
+            return rejectedState(state, action.payload);
         case "CLEAR_USER":
             return initState;
         default:
@@ -38,7 +38,7 @@ export const clearUser = () => ({
 });
 
 export const loginUser = (data) => ({
-    type: "LOGIN_USER", payload: auth.loginUser(data)
+    type: "LOGIN_USER", payload: user.loginUser(data)
 });
 
 export const logoutUser = () => ({

@@ -1,11 +1,12 @@
 import news from "../Webapi/news";
-import {fulfilled, fulfilledState, pending, pendingState, rejected} from "./util";
+import {fulfilled, fulfilledState, pending, pendingState, rejected, rejectedState} from "./util";
 import {apiClient, tokenConfig} from "../Webapi/util";
 import {Response} from "../Webapi/model/response";
 import {News} from "../Webapi/model/news";
 
 const initState = {
     news: [],
+    newsCategories: [],
     isLoading: false
 };
 
@@ -16,11 +17,17 @@ export default (state = initState, action) => {
         case fulfilled("LOAD_NEWS"):
             return {...state, news: action.payload.data, isLoading: false};
         case rejected("LOAD_NEWS"):
-            return {...state, isLoading: false};
+            return rejectedState(state, action.payload);
         case pending("GET_NEWS"):
             return pendingState(state);
         case fulfilled("GET_NEWS"):
             return {...state, news: action.payload.data, isLoading: false};
+        case pending("LOAD_NEWS_CATEGORIES"):
+            return pendingState(state);
+        case fulfilled("LOAD_NEWS_CATEGORIES"):
+            return {...state, newsCategories: action.payload.data, isLoading: false};
+        case rejected("LOAD_NEWS_CATEGORIES"):
+            return rejectedState(state, action.payload);
         default:
             return state;
     }
@@ -51,4 +58,9 @@ export const updateNews = (data) => ({
 export const deleteNews = (url) => ({
     type: "CREATE_NEWS",
     payload: news.delete(url)
+});
+
+export const loadNewsCategories = () => ({
+   type: "LOAD_NEWS_CATEGORIES",
+   payload: news.listCategories()
 });

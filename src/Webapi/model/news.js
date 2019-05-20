@@ -13,3 +13,8 @@ export type News = {
     category: number,
     i18n: Array<NewsI18N>
 };
+
+export type NewsCategory = {
+    id: number,
+    labels: Object
+};
