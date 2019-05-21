@@ -8,8 +8,8 @@ import {getUser, logoutUser, clearUser} from "../reducers/user";
 import {loadNews, getNews, deleteNews} from "../reducers/news";
 import {bindActionCreators} from "redux";
 import {history} from "../store";
-import {withRouter} from "react-router-dom";
-import {isEmpty} from "../util";
+import {Link, withRouter} from "react-router-dom";
+import {isEmpty, routes} from "../util";
 
 class News extends React.Component {
 
@@ -41,6 +41,7 @@ class News extends React.Component {
         return <Fragment>
             <Container className="content">
                 <h1 className={classnames("heading-1")}>News</h1>
+                <Link to={routes.news_add}>Add new</Link>
                 <ul>
                 {this.props.news.map(news =>
                     <li key={news.url}>
