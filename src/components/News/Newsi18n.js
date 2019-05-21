@@ -1,6 +1,5 @@
 import React from 'react';
 import {Col, Container, Dropdown, DropdownItem, DropdownMenu, DropdownToggle, Row} from "reactstrap";
-
 import * as classnames from "classnames";
 
 class Newsi18n extends React.Component {
@@ -11,11 +10,12 @@ class Newsi18n extends React.Component {
         this.toogleLangCode = this.toogleLangCode.bind(this);
         this.state = {
             LangDropdown: false,
+            langValue: '',
             langCode:
                 [
                     "EN",
                     "DE"
-                ]
+                ],
         }
 
     }
@@ -32,6 +32,10 @@ class Newsi18n extends React.Component {
     componentDidUpdate() {
     }
 
+    changeDropdownLang = (e) => {
+        this.setState({langValue: e.currentTarget.innerHTML});
+    };
+
     render() {
 
         return <Container>
@@ -40,33 +44,33 @@ class Newsi18n extends React.Component {
                     <label>Language Code</label>
                     <Dropdown isOpen={this.state.LangDropdown} toggle={this.toogleLangCode}>
                         <DropdownToggle caret id="StatusDropdown">
-                            Draft
+                            {this.state.langValue}
                         </DropdownToggle>
                         <DropdownMenu>
                             {this.state.langCode.map(status => (
-                                <DropdownItem>{status}</DropdownItem>
+                                <DropdownItem onClick={this.changeDropdownLang}>{status}</DropdownItem>
                             ))}
                         </DropdownMenu>
                     </Dropdown>
                 </Col>
-            </Row>
-            <Row style={{paddingTop: '30px'}}>
                 <Col>
                     <label>Title</label><br/>
                     <input type={'text'}/>
                 </Col>
+            </Row>
+            <Row style={{paddingTop: '30px'}}>
                 <Col>
                     <label>Sub line</label><br/>
+                    <input type={'text'}/>
+                </Col>
+                <Col>
+                    <label>Slug</label><br/>
                     <input type={'text'}/>
                 </Col>
             </Row>
             <Row style={{paddingTop: '30px'}}>
                 <Col>
-                    <label>Slug EN</label><br/>
-                    <input type={'text'}/>
-                </Col>
-                <Col>
-                    <label>Text EN</label><br/>
+                    <label>Text</label><br/>
                     <input type={'text'}/>
                 </Col>
             </Row>

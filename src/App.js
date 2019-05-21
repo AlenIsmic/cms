@@ -52,7 +52,6 @@ class App extends Component {
 
     render() {
         const {firstLoad} = this.state;
-        console.log("firstLoad", firstLoad);
         return (
             !firstLoad && <Fragment>
                 <Header/>

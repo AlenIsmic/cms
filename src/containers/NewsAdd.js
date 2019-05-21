@@ -7,7 +7,6 @@ import {connect} from "react-redux";
 import {getUser, logoutUser, clearUser} from "../reducers/user";
 import {loadNews, getNews, deleteNews} from "../reducers/news";
 import {bindActionCreators} from "redux";
-import {NewsI18N} from "../Webapi/model/news";
 import Newsi18n from "../components/News/Newsi18n";
 
 class NewsAdd extends React.Component {
@@ -19,15 +18,26 @@ class NewsAdd extends React.Component {
         this.toggleStatus = this.toggleStatus.bind(this);
         this.state = {
             user: {},
-            news: [],
             StatusDropdown: false,
             CategoryDropdown: false,
+            statusDropdownValue: '',
+            categoryDropdownValue: '',
             allowedStatus:
                 [
                     "draft",
                     "customer_input",
                     "published",
                     "archived"
+                ],
+            categories:
+                [
+                    "cat 1",
+                    "cat 2",
+                    "cat 3"
+                ],
+            i18nComponents:
+                [
+                    <Newsi18n/>,
                 ]
         }
 
@@ -54,6 +64,20 @@ class NewsAdd extends React.Component {
         }));
     }
 
+    changeDropdownStatus = (e) => {
+        this.setState({statusDropdownValue: e.currentTarget.innerHTML})
+    };
+
+    changeDropdownCategory = (e) => {
+        this.setState({categoryDropdownValue: e.currentTarget.innerHTML})
+    };
+
+    addi18n= (e) => {
+        let c = this.state.i18nComponents;
+        c.push(<Newsi18n/>);
+        this.setState({i18nComponents: c})
+    };
+
     render() {
         return <Fragment>
             <Container className="content">
@@ -65,11 +89,11 @@ class NewsAdd extends React.Component {
                         <label>Status</label>
                         <Dropdown isOpen={this.state.StatusDropdown} toggle={this.toggleStatus}>
                             <DropdownToggle caret id="StatusDropdown">
-                                Draft
+                                {this.state.statusDropdownValue}
                             </DropdownToggle>
                             <DropdownMenu>
                                 {this.state.allowedStatus.map(status => (
-                                    <DropdownItem>{status}</DropdownItem>
+                                    <DropdownItem onClick={this.changeDropdownStatus}>{status}</DropdownItem>
                                 ))}
                             </DropdownMenu>
                         </Dropdown>
@@ -88,21 +112,22 @@ class NewsAdd extends React.Component {
                         <label>Category</label>
                         <Dropdown isOpen={this.state.CategoryDropdown} toggle={this.toggleCategory}>
                             <DropdownToggle caret id="CategoryDropdown">
-                                Dropdown
+                                {this.state.categoryDropdownValue}
                             </DropdownToggle>
                             <DropdownMenu>
-                                <DropdownItem>Some Action</DropdownItem>
-                                <DropdownItem>Foo Action</DropdownItem>
-                                <DropdownItem>Bar Action</DropdownItem>
-                                <DropdownItem>Quo Action</DropdownItem>
+                                {this.state.categories.map(status => (
+                                    <DropdownItem onClick={this.changeDropdownCategory}>{status}</DropdownItem>
+                                ))}
                             </DropdownMenu>
                         </Dropdown>
                     </Col>
                 </Row>
-                <Newsi18n/>
+                <Container id={'i18n'}>
+                    {this.state.i18nComponents}
+                </Container>
                 <Row style={{paddingTop: '30px'}}>
                     <Col>
-                        <Button>Add i18n</Button>
+                        <Button onClick={this.addi18n}>Add i18n</Button>
                     </Col>
                 </Row>
                 <Row style={{paddingTop: '30px'}}>
@@ -113,12 +138,9 @@ class NewsAdd extends React.Component {
             </Container>
         </Fragment>
     };
-
 }
 
 function mapState(state){
-    console.log("News");
-    console.log(state);
     return {
         user: state.user.user,
         news: state.news.news
