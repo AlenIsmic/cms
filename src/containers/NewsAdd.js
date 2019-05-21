@@ -7,6 +7,8 @@ import {connect} from "react-redux";
 import {getUser, logoutUser, clearUser} from "../reducers/user";
 import {loadNews, getNews, deleteNews} from "../reducers/news";
 import {bindActionCreators} from "redux";
+import {NewsI18N} from "../Webapi/model/news";
+import Newsi18n from "../components/News/Newsi18n";
 
 class NewsAdd extends React.Component {
 
@@ -97,44 +99,10 @@ class NewsAdd extends React.Component {
                         </Dropdown>
                     </Col>
                 </Row>
+                <Newsi18n/>
                 <Row style={{paddingTop: '30px'}}>
                     <Col>
-                        <label>Titel DE</label><br/>
-                        <input type={'text'}/>
-                    </Col>
-                    <Col>
-                        <label>Title EN</label><br/>
-                        <input type={'text'}/>
-                    </Col>
-                </Row>
-                <Row style={{paddingTop: '30px'}}>
-                    <Col>
-                        <label>Sub line DE</label><br/>
-                        <input type={'text'}/>
-                    </Col>
-                    <Col>
-                        <label>Sub line EN</label><br/>
-                        <input type={'text'}/>
-                    </Col>
-                </Row>
-                <Row style={{paddingTop: '30px'}}>
-                    <Col>
-                        <label>Slug DE</label><br/>
-                        <input type={'text'}/>
-                    </Col>
-                    <Col>
-                        <label>Slug EN</label><br/>
-                        <input type={'text'}/>
-                    </Col>
-                </Row>
-                <Row style={{paddingTop: '30px'}}>
-                    <Col>
-                        <label>Text DE</label><br/>
-                        <input type={'text'}/>
-                    </Col>
-                    <Col>
-                        <label>Text EN</label><br/>
-                        <input type={'text'}/>
+                        <Button>Add i18n</Button>
                     </Col>
                 </Row>
                 <Row style={{paddingTop: '30px'}}>
