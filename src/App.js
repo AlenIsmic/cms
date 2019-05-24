@@ -35,10 +35,9 @@ import Navbar from "./components/Navbars/Navbar.jsx";
 import Footer from "./components/Footer/Footer.jsx";
 import Sidebar from "./components/Sidebar/Sidebar.jsx";
 import { isEmpty, specialRoutes } from "./util";
-
 import routes from "./routes.js";
-
 import logo from "./assets/img/reactlogo.png";
+import NewsAdd from "./containers/NewsAdd";
 
 const switchRoutes = (
     <Switch>
@@ -133,8 +132,8 @@ class App extends Component {
                 {   isEmpty(this.props.user)
                     ?
                     <Switch>
-                        <Route exact path={specialRoutes.login} component={Login}/>
-                        <Redirect to={specialRoutes.login}/>
+                        <Route exact path={routes.login} component={Login}/>
+                        <Redirect to={routes.login}/>
                     </Switch>
                     :
                     <div className={classes.wrapper}>
@@ -181,3 +180,4 @@ function mapActions(dispatch) {
 }
 
 export default withRouter(compose(withStyles(dashboardStyle), connect(mapState, mapActions))(App));
+

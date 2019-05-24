@@ -91,11 +91,15 @@ class News extends React.Component {
                                     data.push(item.url.match(/\d/g).join(""));
                                     data.push(isEmpty(getProp(item, "i18n.0.title")) ? "" : getProp(item, "i18n.0.title"));
                                     var category;
+                                    var categorymatch = "";
                                     for(category in newsCategories){
                                         if (newsCategories[category].id === item.category) {
-                                            data.push(getProp(newsCategories[category], "labels.de"));
+                                            categorymatch = getProp(newsCategories[category], "labels.de");
                                         }
                                     }
+                                    
+                                    data.push(categorymatch);
+
                                     data.push(item.status);
 
                                     return data;
