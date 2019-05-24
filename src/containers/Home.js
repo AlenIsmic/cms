@@ -2,6 +2,7 @@ import React, {Fragment} from 'react';
 import './home.module.css';
 import {connect} from 'react-redux';
 import {bindActionCreators} from "redux";
+import compose from "recompose/compose";
 import News from "./News";
 import {replace} from "connected-react-router";
 import {getUser, logoutUser, clearUser} from "../reducers/user";
@@ -10,6 +11,10 @@ import {history} from "../store";
 import {withRouter, Link} from "react-router-dom";
 import {isEmpty, routes} from "../util";
 import * as classnames from "classnames";
+import PropTypes from "prop-types";
+import withStyles from "@material-ui/core/styles/withStyles";
+
+import dashboardStyle from "../assets/jss/material-dashboard-react/views/dashboardStyle.jsx";
 
 class Home extends React.Component {
 
@@ -21,28 +26,19 @@ class Home extends React.Component {
         };
     }
 
-    logout = async (e) => {
-        e.preventDefault();
-        console.log(this.props);
-        this.props.logoutUser();
-        this.props.clearUser();
-        this.props.replace('/login');
-    };
-
     render() {
+        const {classes} = this.props;
         return (
-             <Fragment>
-                <Container className="content">
-                    <h1 className={classnames("heading-1")}>News</h1>
-                    <div>
-                        <Link to={routes.news}>News</Link>
-                        <a onClick={this.logout}>Log out</a>
-                    </div>
-                </Container>
-            </Fragment>
-        )
+            <Container>
+                <img className={classes.dashboardBackground} src="http://www.skyleet.com/images/newlogo.png" alt="Dashboard"/>
+            </Container>
+        );
     }
 }
+
+Home.propTypes = {
+    classes: PropTypes.object.isRequired
+};
 
 function mapState(state){
     console.log("Home");
@@ -56,4 +52,4 @@ function mapActions(dispatch) {
     return bindActionCreators({getUser, logoutUser, clearUser, replace}, dispatch)
 }
 
-export default connect(mapState, mapActions)(Home);
+export default withRouter(compose(withStyles(dashboardStyle), connect(mapState, mapActions))(Home));

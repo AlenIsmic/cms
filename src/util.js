@@ -56,8 +56,6 @@ export function isEmpty(obj){
     return true;
 }
 
-export const routes = {
-    "home":"/",
-    "login":"/login",
-    "news":"/news",
+export const specialRoutes = {
+    "login": "/login"
 };

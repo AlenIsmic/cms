@@ -31,9 +31,23 @@ class Login extends React.Component {
         user: PropTypes.object
     };
 
-    success = (message) => toast.success(message);
+    success = (message) => toast.success(message, {
+    position: "top-right",
+    autoClose: 5000,
+    hideProgressBar: false,
+    closeOnClick: true,
+    pauseOnHover: true,
+    draggable: true,
+    });
 
-    failure = (message) => toast.error(message);
+    failure = (message) => toast.error(message, {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+    });
 
     onSubmit = async (e) => {
         e.preventDefault();
@@ -46,11 +60,6 @@ class Login extends React.Component {
             this.failure(e.toString());
         }
     };
-
-    // onSubmit = e => {
-    //     e.preventDefault();
-    //     this.props.loginUser({this.state.username, this.state.password});
-    // };
 
     onChange = e => this.setState({ [e.target.name]: e.target.value });
 

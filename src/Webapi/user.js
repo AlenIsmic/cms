@@ -3,7 +3,8 @@ import {apiClient} from './util'
 const config = {
     headers: {
         "Content-Type": "application/json"
-    }
+    },
+    withCredentials: false
 };
 
 export default {

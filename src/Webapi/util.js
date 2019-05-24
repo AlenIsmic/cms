@@ -11,5 +11,6 @@ export const tokenConfig = {
         headers: {
             "Content-Type": "application/json",
             "Authorization": `Token ${isEmpty(localStorage.getItem("token")) ? '' : localStorage.getItem("token")}`
-        }
+        },
+        withCredentials: false
 };

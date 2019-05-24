@@ -28,6 +28,13 @@ export default (state = initState, action) => {
             return {...state, newsCategories: action.payload.data, isLoading: false};
         case rejected("LOAD_NEWS_CATEGORIES"):
             return rejectedState(state, action.payload);
+        case pending("DELETE_NEWS"):
+            return pendingState(state);
+        case fulfilled("DELETE_NEWS"):
+            console.log(action.payload.data);
+            return {...state, newsCategories: action.payload.data, isLoading: false};
+        case rejected("DELETE_NEWS"):
+            return rejectedState(state, action.payload);
         default:
             return state;
     }
@@ -56,7 +63,7 @@ export const updateNews = (data) => ({
 });
 
 export const deleteNews = (url) => ({
-    type: "CREATE_NEWS",
+    type: "DELETE_NEWS",
     payload: news.delete(url)
 });
 
