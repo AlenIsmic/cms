@@ -21,6 +21,8 @@ import Card from "../components/Card/Card.jsx";
 import CardHeader from "../components/Card/CardHeader.jsx";
 import CardBody from "../components/Card/CardBody.jsx";
 import {getProp} from "../util";
+import NewsAdd from "./NewsAdd";
+import NavItem from "reactstrap/es/NavItem";
 
 const styles = {
     cardCategoryWhite: {
@@ -80,6 +82,7 @@ class News extends React.Component {
                         <CardHeader plain color="primary">
                             <h4 className={classes.cardTitleWhite}>
                                 List news
+                                <Button style={{float: 'right'}}> Add new</Button>
                             </h4>
                         </CardHeader>
                         <CardBody>
@@ -97,7 +100,7 @@ class News extends React.Component {
                                             categorymatch = getProp(newsCategories[category], "labels.de");
                                         }
                                     }
-                                    
+
                                     data.push(categorymatch);
 
                                     data.push(item.status);
