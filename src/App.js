@@ -132,8 +132,8 @@ class App extends Component {
                 {   isEmpty(this.props.user)
                     ?
                     <Switch>
-                        <Route exact path={routes.login} component={Login}/>
-                        <Redirect to={routes.login}/>
+                        <Route exact path={specialRoutes.login} component={Login}/>
+                        <Redirect to={specialRoutes.login}/>
                     </Switch>
                     :
                     <div className={classes.wrapper}>
