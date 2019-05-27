@@ -11,12 +11,13 @@ import Tooltip from "@material-ui/core/Tooltip";
 import IconButton from "@material-ui/core/IconButton";
 import Edit from "@material-ui/icons/Edit";
 import Close from "@material-ui/icons/Close";
+import View from "@material-ui/icons/Visibility";
 
 import {withRouter} from "react-router-dom"
 
 // core components
 import tableStyle from "../../assets/jss/material-dashboard-react/components/tableStyle.jsx";
-import {deleteNews, getNews, loadNews} from "../../reducers/news";
+import {deleteNews, getNews, loadNews, loadNewsCategories} from "../../reducers/news";
 import {bindActionCreators} from "redux";
 import {replace} from "connected-react-router";
 import {clearUser, getUser, logoutUser} from "../../reducers/user";
@@ -38,7 +39,8 @@ class CustomTable extends React.Component{
         console.log(url);
         try {
             await this.props.deleteNews("/cms/news/" + url + "/");
-            this.props.replace('/news');
+            await this.props.loadNewsCategories();
+            await this.props.loadNews();
         } catch (e) {
             this.failure(e.toString());
         }
@@ -84,8 +86,25 @@ class CustomTable extends React.Component{
 
                                     <TableCell className={classes.tableActions}>
                                         <Tooltip
+                                            id="tooltip-top-get"
+                                            title="View News"
+                                            placement="top"
+                                            classes={{tooltip: classes.tooltip}}
+                                        >
+                                            <IconButton
+                                                aria-label="View"
+                                                className={classes.tableActionButton}
+                                            >
+                                                <View
+                                                    className={
+                                                        classes.tableActionButtonIcon + " " + classes.view
+                                                    }
+                                                />
+                                            </IconButton>
+                                        </Tooltip>
+                                        <Tooltip
                                             id="tooltip-top"
-                                            title="Edit Task"
+                                            title="Edit News"
                                             placement="top"
                                             classes={{tooltip: classes.tooltip}}
                                         >
@@ -102,7 +121,7 @@ class CustomTable extends React.Component{
                                         </Tooltip>
                                         <Tooltip
                                             id="tooltip-top-start"
-                                            title="Remove"
+                                            title="Remove News"
                                             placement="top"
                                             classes={{tooltip: classes.tooltip}}
                                         >
@@ -159,7 +178,7 @@ function mapState(state){
 }
 
 function mapActions(dispatch) {
-    return bindActionCreators({getUser, logoutUser, clearUser, loadNews, getNews, deleteNews, replace}, dispatch)
+    return bindActionCreators({getUser, logoutUser, clearUser, loadNews, loadNewsCategories, getNews, deleteNews, replace}, dispatch)
 }
 
 export default withRouter(compose(withStyles(tableStyle), connect(mapState, mapActions))(CustomTable));

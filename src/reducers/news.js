@@ -27,6 +27,8 @@ export default (state = initState, action) => {
         case fulfilled("LOAD_NEWS_CATEGORIES"):
             return {...state, newsCategories: action.payload.data, isLoading: false};
         case rejected("LOAD_NEWS_CATEGORIES"):
+            localStorage.removeItem("token");
+            localStorage.removeItem("user");
             return rejectedState(state, action.payload);
         case pending("DELETE_NEWS"):
             return pendingState(state);

@@ -51,13 +51,17 @@ const tableStyle = theme => ({
     verticalAlign: "middle",
     textOverflow: "ellipsis",
     overflow: "hidden",
-      maxWidth: "250px",
-      whiteSpace: "nowrap"
+    maxWidth: "250px",
+    whiteSpace: "nowrap"
   },
   tableResponsive: {
     width: "100%",
     marginTop: theme.spacing.unit * 3,
     overflowX: "auto"
+  },
+  tableActions: {
+    maxWidth: "100px",
+    paddingRight: "0px !important"
   },
   edit: {
       backgroundColor: "transparent",
@@ -67,6 +71,11 @@ const tableStyle = theme => ({
   close: {
       backgroundColor: "transparent",
       color: dangerColor[0],
+      boxShadow: "none"
+  },
+  view: {
+      backgroundColor: "transparent",
+      color: grayColor[0],
       boxShadow: "none"
   }
 });

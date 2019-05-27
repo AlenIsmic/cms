@@ -1,5 +1,6 @@
 import React from "react";
 import classNames from "classnames";
+import compose from "recompose/compose"
 // @material-ui/core components
 import withStyles from "@material-ui/core/styles/withStyles";
 import MenuItem from "@material-ui/core/MenuItem";
@@ -19,6 +20,13 @@ import CustomInput from "../CustomInput/CustomInput.jsx";
 import Button from "../CustomButtons/Button.jsx";
 
 import headerLinksStyle from "../../assets/jss/material-dashboard-react/components/headerLinksStyle.jsx";
+import {withRouter} from "react-router-dom";
+import dashboardStyle from "../../assets/jss/material-dashboard-react/layouts/dashboardStyle";
+import {connect} from "react-redux";
+import {deleteNews, getNews, loadNews} from "../../reducers/news";
+import {bindActionCreators} from "redux";
+import {replace} from "connected-react-router";
+import {clearUser, getUser, logoutUser} from "../../reducers/user";
 
 class HeaderLinks extends React.Component {
   state = {
@@ -34,6 +42,12 @@ class HeaderLinks extends React.Component {
     }
 
     this.setState({ open: false });
+  };
+
+  logout = async () => {
+    this.props.logoutUser();
+    this.props.clearUser();
+    this.props.replace('/login');
   };
 
   render() {
@@ -69,24 +83,37 @@ class HeaderLinks extends React.Component {
             <p className={classes.linkText}>Dashboard</p>
           </Hidden>
         </Button>
-        <div className={classes.manager}>
           <Button
+          color={window.innerWidth > 959 ? "transparent" : "white"}
+          justIcon={window.innerWidth > 959}
+          simple={!(window.innerWidth > 959)}
+          aria-label="Notification"
+          className={classes.buttonLink}>
+              <Notifications className={classes.icons} />
+              <span className={classes.notifications}>5</span>
+              <Hidden mdUp implementation="css">
+              <p className={classes.linkText}>Profile</p>
+          </Hidden>
+      </Button>
+        <div className={classes.manager}
+        >
+            {this.props.user.username}
+            <Button
             buttonRef={node => {
               this.anchorEl = node;
             }}
             color={window.innerWidth > 959 ? "transparent" : "white"}
             justIcon={window.innerWidth > 959}
             simple={!(window.innerWidth > 959)}
+            className={classes.buttonLink}
             aria-owns={open ? "menu-list-grow" : null}
             aria-haspopup="true"
             onClick={this.handleToggle}
-            className={classes.buttonLink}
           >
-            <Notifications className={classes.icons} />
-            <span className={classes.notifications}>5</span>
+                <Person className={classes.icons} />
             <Hidden mdUp implementation="css">
               <p onClick={this.handleClick} className={classes.linkText}>
-                Notification
+                Person
               </p>
             </Hidden>
           </Button>
@@ -114,34 +141,10 @@ class HeaderLinks extends React.Component {
                   <ClickAwayListener onClickAway={this.handleClose}>
                     <MenuList role="menu">
                       <MenuItem
-                        onClick={this.handleClose}
+                        onClick={this.logout}
                         className={classes.dropdownItem}
                       >
-                        Mike John responded to your email
-                      </MenuItem>
-                      <MenuItem
-                        onClick={this.handleClose}
-                        className={classes.dropdownItem}
-                      >
-                        You have 5 new tasks
-                      </MenuItem>
-                      <MenuItem
-                        onClick={this.handleClose}
-                        className={classes.dropdownItem}
-                      >
-                        You're now friend with Andrew
-                      </MenuItem>
-                      <MenuItem
-                        onClick={this.handleClose}
-                        className={classes.dropdownItem}
-                      >
-                        Another Notification
-                      </MenuItem>
-                      <MenuItem
-                        onClick={this.handleClose}
-                        className={classes.dropdownItem}
-                      >
-                        Another One
+                          Log out
                       </MenuItem>
                     </MenuList>
                   </ClickAwayListener>
@@ -150,21 +153,19 @@ class HeaderLinks extends React.Component {
             )}
           </Poppers>
         </div>
-        <Button
-          color={window.innerWidth > 959 ? "transparent" : "white"}
-          justIcon={window.innerWidth > 959}
-          simple={!(window.innerWidth > 959)}
-          aria-label="Person"
-          className={classes.buttonLink}
-        >
-          <Person className={classes.icons} />
-          <Hidden mdUp implementation="css">
-            <p className={classes.linkText}>Profile</p>
-          </Hidden>
-        </Button>
       </div>
     );
   }
 }
 
-export default withStyles(headerLinksStyle)(HeaderLinks);
+function mapState(state) {
+    return {
+        user: state.user.user
+    }
+}
+
+function mapActions(dispatch) {
+    return bindActionCreators({logoutUser, clearUser, replace}, dispatch)
+}
+
+export default withRouter(compose(withStyles(headerLinksStyle), connect(mapState, mapActions))(HeaderLinks));
