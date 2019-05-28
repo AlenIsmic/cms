@@ -24,13 +24,19 @@ import {clearUser, getUser, logoutUser} from "../../reducers/user";
 import {connect} from "react-redux";
 import compose from "recompose/compose"
 
+import ViewNewsModal from "../News/ViewNews";
+import EditNewsModal from "../News/EditNews";
+
 class CustomTable extends React.Component{
 
     constructor(props){
         super(props);
 
         this.state = {
-            news: []
+            news: [],
+            viewNewsIdx: null,
+            ViewNewsModal: false,
+            EditNewsModal: false
         }
     }
 
@@ -46,9 +52,23 @@ class CustomTable extends React.Component{
         }
     };
 
+    // toggleModal = (modal, idx) => {
+    //     this.setState({ [modal]: [!this.state[modal]], viewNewsIdx: idx});
+    //     console.log(this.state[modal], this.state.viewNewsIdx);
+    // };
+
+    toggleViewModal = (idx) => {
+        this.setState({ViewNewsModal: !this.state.ViewNewsModal, viewNewsIdx: idx});
+    };
+
+    toggleEditModal = (idx) => {
+        this.setState({EditNewsModal: !this.state.EditNewsModal, viewNewsIdx: idx});
+    };
+
     render()
     {
-        const {classes, tableHead, tableData, tableHeaderColor} = this.props;
+        const {classes, tableHead, tableData, tableHeaderColor, news, newsCategories} = this.props;
+        const {viewNewsIdx} = this.state;
         return (
             <div className={classes.tableResponsive}>
                 <Table className={classes.table}>
@@ -85,6 +105,7 @@ class CustomTable extends React.Component{
                                     })}
 
                                     <TableCell className={classes.tableActions}>
+                                        <div style={{float: "right"}}>
                                         <Tooltip
                                             id="tooltip-top-get"
                                             title="View News"
@@ -94,6 +115,7 @@ class CustomTable extends React.Component{
                                             <IconButton
                                                 aria-label="View"
                                                 className={classes.tableActionButton}
+                                                onClick={(e) => this.toggleViewModal(key, e)}
                                             >
                                                 <View
                                                     className={
@@ -111,6 +133,7 @@ class CustomTable extends React.Component{
                                             <IconButton
                                                 aria-label="Edit"
                                                 className={classes.tableActionButton}
+                                                onClick={(e) => this.toggleEditModal(key, e)}
                                             >
                                                 <Edit
                                                     className={
@@ -137,12 +160,23 @@ class CustomTable extends React.Component{
                                                 />
                                             </IconButton>
                                         </Tooltip>
+                                        </div>
                                     </TableCell>
                                 </TableRow>
                             );
                         })}
                     </TableBody>
                 </Table>
+                <ViewNewsModal
+                    isOpen={this.state.ViewNewsModal}
+                    toggle={() => this.toggleViewModal()}
+                    data={{viewNewsIdx, news, newsCategories}}
+                />
+                <EditNewsModal
+                    isOpen={this.state.EditNewsModal}
+                    toggle={() => this.toggleEditModal()}
+                    data={{viewNewsIdx, news, newsCategories}}
+                />
             </div>
         );
     }

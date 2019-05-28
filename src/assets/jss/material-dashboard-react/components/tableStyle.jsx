@@ -51,8 +51,9 @@ const tableStyle = theme => ({
     verticalAlign: "middle",
     textOverflow: "ellipsis",
     overflow: "hidden",
-    maxWidth: "250px",
-    whiteSpace: "nowrap"
+    whiteSpace: "nowrap",
+    minWidth: "50px",
+    maxWidth: "300px"
   },
   tableResponsive: {
     width: "100%",
@@ -60,7 +61,6 @@ const tableStyle = theme => ({
     overflowX: "auto"
   },
   tableActions: {
-    maxWidth: "100px",
     paddingRight: "0px !important"
   },
   edit: {

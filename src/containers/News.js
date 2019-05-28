@@ -1,5 +1,5 @@
 import React, {Fragment} from 'react';
-import {Button, Col, Container, Row} from "reactstrap";
+import {Col, Container, Row} from "reactstrap";
 import style from "./News.module.css";
 import * as classnames from "classnames";
 import {replace} from "connected-react-router";
@@ -20,9 +20,10 @@ import Table from "../components/Table/Table.jsx";
 import Card from "../components/Card/Card.jsx";
 import CardHeader from "../components/Card/CardHeader.jsx";
 import CardBody from "../components/Card/CardBody.jsx";
+import Button from "../components/CustomButtons/Button.jsx";
 import {getProp} from "../util";
-import NewsAdd from "./NewsAdd";
-import NavItem from "reactstrap/es/NavItem";
+import AddNewsModal from "../components/News/AddNews";
+import {blackColor, hexToRgb, infoColor, successColor} from "../assets/jss/material-dashboard-react";
 
 const styles = {
     cardCategoryWhite: {
@@ -51,6 +52,36 @@ const styles = {
             fontWeight: "400",
             lineHeight: "1"
         }
+    },
+    cardTitleBadge: {
+        height: "40px",
+        width: "97%",
+        position: "absolute",
+        marginTop: "-10px",
+        "& button": {
+            float: 'right',
+            backgroundColor: successColor[1],
+            color: "inherit",
+            boxShadow:
+            "0 12px 20px -10px rgba(" +
+            hexToRgb(successColor[1]) +
+            ",.28), 0 4px 20px 0 rgba(" +
+            hexToRgb(blackColor) +
+            ",.12), 0 7px 8px -5px rgba(" +
+            hexToRgb(successColor[1]) +
+            ",.2)",
+            "&:hover,&:focus": {
+                backgroundColor: successColor[1],
+                boxShadow:
+                "0 12px 20px -10px rgba(" +
+                hexToRgb(successColor[1]) +
+                ",.28), 0 4px 20px 0 rgba(" +
+                hexToRgb(blackColor) +
+                ",.12), 0 7px 8px -5px rgba(" +
+                hexToRgb(successColor[1]) +
+                ",.2)"
+            }
+        }
     }
 };
 
@@ -61,7 +92,8 @@ class News extends React.Component {
 
         this.state = {
             user: {},
-            news: []
+            news: [],
+            AddNewsModal: false
         }
 
     }
@@ -73,17 +105,25 @@ class News extends React.Component {
         console.log(this.props);
     }
 
+    toggleAddModal = () => {
+        this.setState({ AddNewsModal: !this.state.AddNewsModal});
+    };
+
     render() {
         const {classes, news, newsCategories} = this.props;
         return (
             <GridContainer>
                 <GridItem xs={12} sm={12} md={12}>
                     <Card plain>
-                        <CardHeader plain color="primary">
+                        <CardHeader plain color="primary" style={{paddingBottom: "20px"}}>
                             <h4 className={classes.cardTitleWhite}>
                                 List news
-                                <Button style={{float: 'right'}}> Add new</Button>
                             </h4>
+                            <p className={classes.cardTitleBadge}>
+                                <Button onClick={(e) => this.toggleAddModal(e)}>
+                                    Add News
+                                </Button>
+                            </p>
                         </CardHeader>
                         <CardBody>
                             <Table
@@ -95,11 +135,12 @@ class News extends React.Component {
                                     data.push(isEmpty(getProp(item, "i18n.0.title")) ? "" : getProp(item, "i18n.0.title"));
                                     var category;
                                     var categorymatch = "";
-                                    for(category in newsCategories){
-                                        if (newsCategories[category].id === item.category) {
-                                            categorymatch = getProp(newsCategories[category], "labels.de");
+                                    categorymatch = newsCategories.find(function(category) {
+                                        console.log(category);
+                                        if (category.id === item.category) {
+                                            return getProp(newsCategories[category], "labels.de");
                                         }
-                                    }
+                                    });
 
                                     data.push(categorymatch);
 
@@ -111,6 +152,11 @@ class News extends React.Component {
                         </CardBody>
                     </Card>
                 </GridItem>
+                <AddNewsModal
+                    isOpen={this.state.AddNewsModal}
+                    toggle={() => this.toggleAddModal()}
+                    data={{news, newsCategories}}
+                />
             </GridContainer>
         );
     }

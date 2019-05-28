@@ -60,7 +60,7 @@ class App extends Component {
         super(props);
         this.state = {
             image: "http://skyleet.com/images/newlogo.png",
-            color: "blue",
+            color: "purple",
             hasImage: true,
             firstLoad: true,
             mobileOpen: false
