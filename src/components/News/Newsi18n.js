@@ -1,79 +1,75 @@
 import React from 'react';
-import {Col, Container, Dropdown, DropdownItem, DropdownMenu, DropdownToggle, Row} from "reactstrap";
+import {Col, Container, Dropdown, DropdownItem, DropdownMenu, DropdownToggle, Row, FormGroup, Input, Label} from "reactstrap";
 import * as classnames from "classnames";
 
 class Newsi18n extends React.Component {
 
     constructor(props) {
         super(props);
-
-        this.toogleLangCode = this.toogleLangCode.bind(this);
         this.state = {
-            LangDropdown: false,
-            langValue: '',
+            langValue: "",
             langCode:
                 [
                     "EN",
                     "DE"
-                ],
+                ]
         }
 
     }
 
-    toogleLangCode() {
-        this.setState(prevState => ({
-            LangDropdown: !prevState.LangDropdown
-        }));
+    selectLanguageChange(event){
+        this.setState({ langValue: event.currentTarget.value })
     }
-
-    componentDidMount() {
-    }
-
-    componentDidUpdate() {
-    }
-
-    changeDropdownLang = (e) => {
-        this.setState({langValue: e.currentTarget.innerHTML});
-    };
 
     render() {
-
-        return <Container>
+        return <Container style={{padding: "0"}}>
+            <div style={{fontWeight: "bold", padding: "30px 0"}}>Language</div>
             <Row>
                 <Col>
-                    <label>Language Code</label>
-                    <Dropdown isOpen={this.state.LangDropdown} toggle={this.toogleLangCode}>
-                        <DropdownToggle caret id="StatusDropdown">
-                            {this.state.langValue}
-                        </DropdownToggle>
-                        <DropdownMenu>
-                            {this.state.langCode.map(status => (
-                                <DropdownItem onClick={this.changeDropdownLang}>{status}</DropdownItem>
-                            ))}
-                        </DropdownMenu>
-                    </Dropdown>
+                    <FormGroup inline>
+                        <Label for="language_code">Language Code</Label>
+                        <Input type="select" name="language_code" id="language_code" value={this.state.langValue} onChange={this.props.selectLanguageChange}>
+                            {
+                                this.state.langCode.map(lang => {
+                                    return (
+                                        <option>{lang}</option>
+                                    );
+                                })
+                            }
+                        </Input>
+                    </FormGroup>
                 </Col>
                 <Col>
-                    <label>Title</label><br/>
-                    <input type={'text'}/>
+                    <FormGroup inline>
+                        <Label for="title">Title</Label>
+                        <Input type="text" name="title" id="title" placeholder="Enter title ..."/>
+                    </FormGroup>
                 </Col>
             </Row>
-            <Row style={{paddingTop: '30px'}}>
+            <Row>
                 <Col>
-                    <label>Sub line</label><br/>
-                    <input type={'text'}/>
+                    <FormGroup inline>
+                        <Label for="subline">Subline</Label>
+                        <Input type="text" name="subline" id="subline" placeholder="Enter subline ..."/>
+                    </FormGroup>
                 </Col>
                 <Col>
-                    <label>Slug</label><br/>
-                    <input type={'text'}/>
-                </Col>
-            </Row>
-            <Row style={{paddingTop: '30px'}}>
-                <Col>
-                    <label>Text</label><br/>
-                    <input type={'text'}/>
+                    <FormGroup inline>
+                        <Label for="slug">Slug</Label>
+                        <Input type="text" name="slug" id="slug" placeholder="Enter slug ..."/>
+                    </FormGroup>
                 </Col>
             </Row>
+            <Row>
+                <Col>
+                    <FormGroup inline>
+                        <Label for="text">Text</Label>
+                        <Input type="text" name="text" id="text" placeholder="Enter text ..."/>
+                    </FormGroup>
+                </Col>
+                <Col></Col>
+            </Row>
+            <hr/>
         </Container>
     };
 

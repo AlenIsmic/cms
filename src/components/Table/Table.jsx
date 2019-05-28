@@ -25,7 +25,7 @@ import {connect} from "react-redux";
 import compose from "recompose/compose"
 
 import ViewNewsModal from "../News/ViewNews";
-import EditNewsModal from "../News/EditNews";
+import EditNews from "../News/EditNews";
 
 class CustomTable extends React.Component{
 
@@ -61,8 +61,8 @@ class CustomTable extends React.Component{
         this.setState({ViewNewsModal: !this.state.ViewNewsModal, viewNewsIdx: idx});
     };
 
-    toggleEditModal = (idx) => {
-        this.setState({EditNewsModal: !this.state.EditNewsModal, viewNewsIdx: idx});
+    EditNewsRedirect = (idx) => {
+        this.props.replace();
     };
 
     render()
@@ -133,7 +133,7 @@ class CustomTable extends React.Component{
                                             <IconButton
                                                 aria-label="Edit"
                                                 className={classes.tableActionButton}
-                                                onClick={(e) => this.toggleEditModal(key, e)}
+                                                onClick={(e) => this.EditNewsRedirect(key, e)}
                                             >
                                                 <Edit
                                                     className={
@@ -170,11 +170,6 @@ class CustomTable extends React.Component{
                 <ViewNewsModal
                     isOpen={this.state.ViewNewsModal}
                     toggle={() => this.toggleViewModal()}
-                    data={{viewNewsIdx, news, newsCategories}}
-                />
-                <EditNewsModal
-                    isOpen={this.state.EditNewsModal}
-                    toggle={() => this.toggleEditModal()}
                     data={{viewNewsIdx, news, newsCategories}}
                 />
             </div>

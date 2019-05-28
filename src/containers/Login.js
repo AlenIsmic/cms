@@ -1,6 +1,5 @@
 import React, {Fragment} from 'react';
 import './login.module.css';
-import {toast} from "react-toastify";
 import {connect} from 'react-redux';
 import {loginUser, getUser} from "../reducers/user";
 import {bindActionCreators} from "redux";
@@ -14,6 +13,7 @@ import PropTypes from "prop-types";
 import {withRouter} from "react-router-dom";
 import {history} from "../store";
 import {isEmpty} from "../util"
+import {success, failure} from "../util";
 
 class Login extends React.Component {
 
@@ -31,33 +31,15 @@ class Login extends React.Component {
         user: PropTypes.object
     };
 
-    success = (message) => toast.success(message, {
-    position: "top-right",
-    autoClose: 5000,
-    hideProgressBar: false,
-    closeOnClick: true,
-    pauseOnHover: true,
-    draggable: true,
-    });
-
-    failure = (message) => toast.error(message, {
-        position: "top-right",
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-    });
-
     onSubmit = async (e) => {
         e.preventDefault();
         const data = {...this.state.data};
         try {
             await this.props.loginUser(this.state);
-            this.success("Logged in");
+            success("Logged in");
             this.props.replace('/');
         } catch (e) {
-            this.failure(e.toString());
+            failure(e.toString());
         }
     };
 

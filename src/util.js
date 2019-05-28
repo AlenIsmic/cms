@@ -1,3 +1,5 @@
+import {toast} from "react-toastify";
+
 export function setDeepProp(obj, value, fields) {
     if (fields.length === 1) {
         obj[fields[0]] = value;
@@ -56,7 +58,24 @@ export function isEmpty(obj){
     return true;
 }
 
+export const success = (message) => toast.success(message, {
+    position: "top-right",
+    autoClose: 5000,
+    hideProgressBar: false,
+    closeOnClick: true,
+    pauseOnHover: true,
+    draggable: true,
+});
+
+export const failure = (message) => toast.error(message, {
+    position: "top-right",
+    autoClose: 5000,
+    hideProgressBar: false,
+    closeOnClick: true,
+    pauseOnHover: true,
+    draggable: true,
+});
+
 export const specialRoutes = {
     "login": "/login",
-    "newsadd": "/newsadd",
 };

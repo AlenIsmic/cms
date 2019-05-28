@@ -37,7 +37,6 @@ import Sidebar from "./components/Sidebar/Sidebar.jsx";
 import { isEmpty, specialRoutes } from "./util";
 import routes from "./routes.js";
 import logo from "./assets/img/reactlogo.png";
-import NewsAdd from "./containers/NewsAdd";
 
 const switchRoutes = (
     <Switch>
@@ -154,7 +153,6 @@ class App extends Component {
                             {...rest}
                         />
                         <div className={classes.content}>
-
                             <div className={classes.container}>{switchRoutes}</div>
                         </div>
                         <Footer/>

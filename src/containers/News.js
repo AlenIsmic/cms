@@ -22,7 +22,6 @@ import CardHeader from "../components/Card/CardHeader.jsx";
 import CardBody from "../components/Card/CardBody.jsx";
 import Button from "../components/CustomButtons/Button.jsx";
 import {getProp} from "../util";
-import AddNewsModal from "../components/News/AddNews";
 import {blackColor, hexToRgb, infoColor, successColor} from "../assets/jss/material-dashboard-react";
 
 const styles = {
@@ -92,8 +91,7 @@ class News extends React.Component {
 
         this.state = {
             user: {},
-            news: [],
-            AddNewsModal: false
+            news: []
         }
 
     }
@@ -105,13 +103,11 @@ class News extends React.Component {
         console.log(this.props);
     }
 
-    toogleRedirect = () => {
-
+    redirectToAddNews(){
+        this.props.replace("/news/add");
     }
 
-    toggleAddModal = () => {
-        this.setState({ AddNewsModal: !this.state.AddNewsModal});
-    };
+
 
     render() {
         const {classes, news, newsCategories} = this.props;
@@ -124,7 +120,7 @@ class News extends React.Component {
                                 List news
                             </h4>
                             <p className={classes.cardTitleBadge}>
-                                <Button onClick={(e) => this.toggleAddModal(e)}>
+                                <Button onClick={(e) => this.redirectToAddNews(e)}>
                                     Add News
                                 </Button>
                             </p>
@@ -139,12 +135,11 @@ class News extends React.Component {
                                     data.push(isEmpty(getProp(item, "i18n.0.title")) ? "" : getProp(item, "i18n.0.title"));
                                     var category;
                                     var categorymatch = "";
-                                    categorymatch = newsCategories.find(function(category) {
-                                        console.log(category);
-                                        if (category.id === item.category) {
-                                            return getProp(newsCategories[category], "labels.de");
+                                    for(category in newsCategories){
+                                        if (newsCategories[category].id === item.category) {
+                                            categorymatch = getProp(newsCategories[category], "labels.de");
                                         }
-                                    });
+                                    }
 
                                     data.push(categorymatch);
 
@@ -156,11 +151,6 @@ class News extends React.Component {
                         </CardBody>
                     </Card>
                 </GridItem>
-                <AddNewsModal
-                    isOpen={this.state.AddNewsModal}
-                    toggle={() => this.toggleAddModal()}
-                    data={{news, newsCategories}}
-                />
             </GridContainer>
         );
     }
