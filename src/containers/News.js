@@ -105,6 +105,10 @@ class News extends React.Component {
         console.log(this.props);
     }
 
+    toogleRedirect = () => {
+
+    }
+
     toggleAddModal = () => {
         this.setState({ AddNewsModal: !this.state.AddNewsModal});
     };

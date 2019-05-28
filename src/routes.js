@@ -4,6 +4,7 @@ import List from "@material-ui/icons/ListAlt";
 // core components/views for Admin layout
 import Home from "./containers/Home";
 import News from "./containers/News";
+import NewsAdd from "./containers/NewsAdd";
 // core components/views for RTL layout
 const dashboardRoutes = [
   {
@@ -11,14 +12,24 @@ const dashboardRoutes = [
     name: "Dashboard",
     icon: Dashboard,
     component: Home,
-    layout: "/"
+    layout: "/",
+    dashboard: true
   },
   {
     path: "news",
     name: "News",
     icon: List,
     component: News,
-    layout: "/"
+    layout: "/",
+    dashboard: true
+  },
+  {
+    path: "newsadd",
+    name: "Add News",
+    icon: List,
+    component: NewsAdd,
+    layout: "/",
+    dashboard: false
   }
 ];
 

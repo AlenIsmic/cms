@@ -57,5 +57,6 @@ export function isEmpty(obj){
 }
 
 export const specialRoutes = {
-    "login": "/login"
+    "login": "/login",
+    "newsadd": "/newsadd",
 };
