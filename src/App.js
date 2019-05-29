@@ -79,10 +79,10 @@ class App extends Component {
         catch (e) {
             console.log(e);
         }
-        if (navigator.platform.indexOf("Win") > -1) {
-            const ps = new PerfectScrollbar(this.refs.mainPanel);
-        }
-        window.addEventListener("resize", this.resizeFunction);
+        // if (navigator.platform.indexOf("Win") > -1) {
+        //     const ps = new PerfectScrollbar(this.refs.mainPanel);
+        // }
+        // window.addEventListener("resize", this.resizeFunction);
         this.setState({firstLoad: false});
 
     }
