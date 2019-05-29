@@ -26,6 +26,7 @@ import compose from "recompose/compose"
 
 import ViewNewsModal from "../News/ViewNews";
 import EditNews from "../News/EditNews";
+import {failure, success} from "../../util";
 
 class CustomTable extends React.Component{
 
@@ -41,14 +42,13 @@ class CustomTable extends React.Component{
     }
 
     removeNews = async (url) => {
-        console.log("Delete news");
-        console.log(url);
         try {
             await this.props.deleteNews("/cms/news/" + url + "/");
             await this.props.loadNewsCategories();
             await this.props.loadNews();
+            success("News deleted successfully!");
         } catch (e) {
-            this.failure(e.toString());
+            failure(e.toString());
         }
     };
 
@@ -61,8 +61,8 @@ class CustomTable extends React.Component{
         this.setState({ViewNewsModal: !this.state.ViewNewsModal, viewNewsIdx: idx});
     };
 
-    EditNewsRedirect = (idx) => {
-        this.props.replace();
+    EditNewsRedirect = (id) => {
+        this.props.replace(`/news/${id}/edit`);
     };
 
     render()
@@ -133,7 +133,7 @@ class CustomTable extends React.Component{
                                             <IconButton
                                                 aria-label="Edit"
                                                 className={classes.tableActionButton}
-                                                onClick={(e) => this.EditNewsRedirect(key, e)}
+                                                onClick={(e) => this.EditNewsRedirect(prop[0], e)}
                                             >
                                                 <Edit
                                                     className={

@@ -7,6 +7,7 @@ import {News} from "../Webapi/model/news";
 const initState = {
     news: [],
     newsCategories: [],
+    singleNews: {},
     isLoading: false
 };
 
@@ -21,7 +22,7 @@ export default (state = initState, action) => {
         case pending("GET_NEWS"):
             return pendingState(state);
         case fulfilled("GET_NEWS"):
-            return {...state, news: action.payload.data, isLoading: false};
+            return {...state, singleNews: action.payload.data, isLoading: false};
         case pending("LOAD_NEWS_CATEGORIES"):
             return pendingState(state);
         case fulfilled("LOAD_NEWS_CATEGORIES"):
@@ -59,9 +60,9 @@ export const createNews = (data) => ({
    payload: news.post(data)
 });
 
-export const updateNews = (data) => ({
+export const updateNews = (id, data) => ({
     type: "CREATE_NEWS",
-    payload: news.put(data)
+    payload: news.put(id, data)
 });
 
 export const deleteNews = (url) => ({

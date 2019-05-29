@@ -72,31 +72,40 @@ class ViewNewsModal extends React.Component {
                     News Details
                 </ModalHeader>
                 <ModalBody>
-                        {  Object.keys(data.news[data.viewNewsIdx]).map(function(key, index) {
+                    <Col>
+                    <div className="form-label text-muted font-weight-bold h5">{"Basic data"}</div>
+                    </Col>
+                    {  Object.keys(data.news[data.viewNewsIdx]).map(function(key, index) {
                             if (key !== "i18n") {
                                 return (
+                                    <Col>
                                     <Col sm={6} className="my-2">
                                     <div className="form-label text-muted font-weight-bold">{key.charAt(0).toUpperCase() + key.slice(1)}</div>
                                     {data.news[data.viewNewsIdx][key]}
                                     </Col>
+                                    </Col>
                                 );
                             }
                             else {
-
-                                return (Object.keys(data.news[data.viewNewsIdx][key]).map(function(language){
+                                console.log(key);
+                                 return data.news[data.viewNewsIdx][key].map(function(language){
                                     return (
                                         <Col>
                                         <hr/>
-                                        <div className="form-label text-muted font-weight-bold">{"Language " + language["language"]}</div>
-                                            {/*return (Object.keys(language).map(function(language_key){*/}
-                                            {/*<Col sm={6} className="my-2">*/}
-                                                {/*<div className="form-label text-muted font-weight-bold">{key.charAt(0).toUpperCase() + key.slice(1)}</div>*/}
-                                                {/*{data.news[data.viewNewsIdx][key]}*/}
-                                            {/*</Col>*/}
-                                        {/*}));*/}
+                                        <div className="form-label text-muted font-weight-bold h5">{"Language " + language.language.toUpperCase()}</div>
+                                            {
+                                                Object.keys(language).map(function(language_key){
+                                                    return (
+                                                <Col sm={6} className="my-2">
+                                                <div className="form-label text-muted font-weight-bold">{language_key.charAt(0).toUpperCase() + language_key.slice(1)}</div>
+                                                {language[language_key]}
+                                                </Col>
+                                                );
+                                            })
+                                            }
                                         </Col>
                                     );
-                                }));
+                                });
                             }
                         })
                         }

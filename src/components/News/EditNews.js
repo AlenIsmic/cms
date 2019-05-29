@@ -5,22 +5,21 @@ import * as classnames from "classnames";
 import {replace} from "connected-react-router";
 import {connect} from "react-redux";
 import {getUser, logoutUser, clearUser} from "../../reducers/user";
-import {loadNews, getNews, deleteNews, createNews} from "../../reducers/news";
+import {loadNews, getNews, deleteNews, createNews, updateNews} from "../../reducers/news";
 import {bindActionCreators} from "redux";
 import Newsi18n from "./Newsi18n";
 import {withRouter} from "react-router-dom";
 import withStyles from "@material-ui/core/styles/withStyles";
 import compose from "recompose/compose";
-import {success, failure} from "../../util";
+import {success, failure, isEmpty} from "../../util";
 
 class EditNews extends React.Component {
 
     constructor(props) {
         super(props);
 
-        this.toggleCategory = this.toggleCategory.bind(this);
-        this.toggleStatus = this.toggleStatus.bind(this);
         this.state = {
+            newsId: null,
             user: {},
             StatusDropdown: false,
             CategoryDropdown: false,
@@ -33,20 +32,27 @@ class EditNews extends React.Component {
                     "published",
                     "archived"
                 ],
-            i18nComponents:
+            langCode:
                 [
+                    "EN",
+                    "DE"
                 ],
-            data: {}
+            currentNews: {}
         }
-
     }
 
-    async componentDidMount(){
+    async componentDidMount() {
         const id = this.props.match.params.id;
-
-        let c = this.state.i18nComponents;
-        c.push(<Newsi18n/>);
-        this.setState({i18nComponents: c})
+        let data = {};
+        try{
+            data = await this.props.getNews(id);
+            console.log(data);
+        }
+        catch(e){
+            console.log(e.message);
+            failure(e.toString());
+        }
+        this.setState({newsId: id, currentNews: data.value.data})
     }
 
     logout = async () => {
@@ -55,24 +61,24 @@ class EditNews extends React.Component {
         this.props.replace('/login');
     };
 
-    toggleStatus() {
-        this.setState(prevState => ({
-            StatusDropdown: !prevState.StatusDropdown
-        }));
-    }
-    toggleCategory() {
-        this.setState(prevState => ({
-            CategoryDropdown: !prevState.CategoryDropdown
-        }));
-    }
-
-    selectStatusChange(event) {
-        console.log(event.currentTarget.value);
-        this.setState({ statusDropdownValue: event.currentTarget.value }) // I tried before target.value, or nativeEvent.value
-    }
+    selectStatusChange = (event) => {
+        var currentNewsCopy = this.state.currentNews;
+        currentNewsCopy.status = event.currentTarget.value;
+        this.setState({ currentNews: currentNewsCopy }) // I tried before target.value, or nativeEvent.value
+    };
 
     selectCategoryChange = (event) => {
-        this.setState({ categoryDropdownValue: event.currentTarget.value })
+        var currentNewsCopy = this.state.currentNews;
+        currentNewsCopy.category = event.currentTarget.value;
+        this.setState({ currentNews: currentNewsCopy }) // I tried before target.value, or nativeEvent.value
+    };
+
+    handleOnChange = (e) => {
+        const { value, name } = e.target;
+        var currentNewsCopy = this.state.currentNews;
+        currentNewsCopy[name] = value;
+        console.log(currentNewsCopy);
+        this.setState({ currentNews: currentNewsCopy }) // I tried before target.value, or nativeEvent.value
     };
 
     addi18n= (e) => {
@@ -83,29 +89,89 @@ class EditNews extends React.Component {
 
     onSubmit = async (e) => {
         e.preventDefault();
-        const data = {...this.state.data};
+
         try {
-            await this.props.createNews(this.state);
-            success("News created successfully!");
+            await this.props.updateNews(this.state.newsId, this.state.currentNews);
+            success("News updated successfully!");
             this.props.replace('/news');
         } catch (e) {
             failure(e.toString());
         }
     };
-    render() {
+
+    handleRelatedNewsChange = idx => evt => {
+        let newCurrentNews = this.state.currentNews;
+        const newRelatedNews = newCurrentNews.relatedTo.map((related, sidx) => {
+            if (idx !== sidx) return related;
+            return evt.target.value;
+        });
+
+        newCurrentNews.relatedTo = newRelatedNews;
+
+        this.setState({ currentNews: newCurrentNews });
+    };
+
+    handleAddRelatedNewsholder = () => {
+        let newCurrentNews = this.state.currentNews;
+        newCurrentNews.relatedTo = newCurrentNews.relatedTo.concat([""]);
+        this.setState({
+            currentNews: newCurrentNews
+        });
+    };
+
+    handleRemoveRelatedNews = idx => () => {
+        let newCurrentNews = this.state.currentNews;
+        newCurrentNews.relatedTo = newCurrentNews.relatedTo.filter((s, sidx) => idx !== sidx);
+        this.setState({
+            currentNews: newCurrentNews
+        });
+    };
+
+    selectLanguage = (id, e) => {
+        let newCurrentNews = this.state.currentNews;
+        newCurrentNews.i18n[id].language = e.currentTarget.value.toLowerCase();
+        this.setState({ currentNews: newCurrentNews })
+    };
+
+    onChangei18n = (id, e) => {
+        const { value, name } = e.target;
+        let newCurrentNews = this.state.currentNews;
+        newCurrentNews.i18n[id][name] = value;
+        this.setState({ currentNews : newCurrentNews })
+    };
+
+    addi18n= (e) => {
+        let c = this.state.currentNews;
+        if(c.i18n.length < 2) {
+            c.i18n.push({
+                title: "",
+                slug: "",
+                subline: "",
+                text: "",
+                language: c.i18n[0].language === "en" ? "de" : "en"
+            });
+            this.setState({currentNews: c})
+        }
+    };
+
+    render(){
+        const {currentNews} = this.state;
+        if(isEmpty(currentNews)){
+            return ""
+        }
         return <Fragment>
             <Container className="content">
-                <h1>Add News</h1>
+                <h1>Edit News</h1>
             </Container>
             <Container style={{width: "1050px"}}>
-                <Form onSubmit={this.onSubmit}>
+                <Form onSubmit={(e, data) => this.onSubmit(e, data)}>
                     <h3>Basic Data</h3>
                     <hr />
                     <Row>
                         <Col>
                             <FormGroup inline>
                                 <Label for="status">Status</Label>
-                                <Input type="select" name="status" id="status" value={this.state.statusDropdownValue} onChange={(e) => this.selectStatusChange(e)}>
+                                <Input type="select" name="status" id="status" value={currentNews.status} onChange={(e) => this.selectStatusChange(e)}>
                                     {
                                         this.state.allowedStatus.map(status => {
                                             return (
@@ -119,7 +185,7 @@ class EditNews extends React.Component {
                         <Col>
                             <FormGroup inline>
                                 <Label for="editorialAuthor">Editorial Author</Label>
-                                <Input type="text" name="editorialAuthor" id="editorialAuthor" placeholder="Enter author ..." />
+                                <Input type="text" name="editorialAuthor" id="editorialAuthor" value={currentNews.editorialAuthor} onChange={(e) => this.handleOnChange(e)} placeholder="Enter author ..." />
                             </FormGroup>
                         </Col>
                     </Row>
@@ -127,13 +193,13 @@ class EditNews extends React.Component {
                         <Col>
                             <FormGroup inline>
                                 <Label for="image">Image</Label>
-                                <Input type="text" name="image" id="image" placeholder="Enter image's relative path ..." />
+                                <Input type="text" name="image" id="image" value={currentNews.image} onChange={(e) => this.handleOnChange(e)} placeholder="Enter image's relative path ..." />
                             </FormGroup>
                         </Col>
                         <Col>
                             <FormGroup inline>
                                 <Label for="category">Category</Label>
-                                <Input type="select" name="category" id="category" value={this.state.categoryDropdownValue} onChange={(e) => this.selectCategoryChange(e)}>
+                                <Input type="select" name="category" id="category" value={currentNews.category} onChange={(e) => this.selectCategoryChange(e)}>
                                     {
                                         this.props.newsCategories.map(category => {
                                             return (
@@ -145,14 +211,105 @@ class EditNews extends React.Component {
                             </FormGroup>
                         </Col>
                     </Row>
+                    <Row>
+                        <Col>
+                            <FormGroup inline>
+                                <Label for="pageRef">Page Ref</Label>
+                                <Input type="text" name="pageRef" id="pageRef" value={currentNews.pageRef} onChange={(e) => this.handleOnChange(e)} placeholder="Enter Page Ref relative path ..." />
+                            </FormGroup>
+                        </Col>
+                        <Col>
+                            <FormGroup inline>
+                                <Label for="relatedTo">Related To</Label>
+                                {currentNews.relatedTo.map((related, idx) => (
+                                    <Row style={{paddingBottom: "5px"}}>
+                                        <Col style={{maxWidth: "91%"}}>
+                                            <Input
+                                                type="text"
+                                                placeholder={`Enter Related News relative path ...`}
+                                                value={related}
+                                                onChange={this.handleRelatedNewsChange(idx)}
+                                            />
+                                        </Col>
+                                        <Button
+                                            type="button"
+                                            onClick={this.handleRemoveRelatedNews(idx)}
+                                            className="small"
+                                        >
+                                            -
+                                        </Button>
+                                    </Row>
+                                ))}
+                                <br/>
+                                <Button
+                                    type="button"
+                                    onClick={this.handleAddRelatedNewsholder}
+                                    className="small"
+                                >
+                                    Add Related News
+                                </Button>
+                            </FormGroup>
+                        </Col>
+                    </Row>
                     <h3 style={{marginTop: "60px"}}>Internationalization</h3>
                     <hr />
                     <Container id={'i18n'} style={{padding: "0"}}>
-                        {this.state.i18nComponents}
+                        { currentNews.i18n.map((language, idx) => (
+                            <Container style={{padding: "0"}}>
+                                <div style={{fontWeight: "bold", padding: "30px 0"}}>Language {language.language.toUpperCase()}</div>
+                                <Row>
+                                    <Col>
+                                        <FormGroup inline>
+                                            <Label for="language">Language Code</Label>
+                                            <Input type="select" name="language" id="language" value={language.language.toUpperCase()} onChange={(e) => this.selectLanguage(idx, e)}>
+                                                {
+                                                    this.state.langCode.map(lang => {
+                                                        return (
+                                                            <option>{lang}</option>
+                                                        );
+                                                    })
+                                                }
+                                            </Input>
+                                        </FormGroup>
+                                    </Col>
+                                    <Col>
+                                        <FormGroup inline>
+                                            <Label for="title">Title</Label>
+                                            <Input type="text" name="title" id="title" value={language.title} onChange={(e) => this.onChangei18n(idx, e)} placeholder="Enter title ..."/>
+                                        </FormGroup>
+                                    </Col>
+                                </Row>
+                                <Row>
+                                    <Col>
+                                        <FormGroup inline>
+                                            <Label for="subline">Subline</Label>
+                                            <Input type="text" name="subline" id="subline" value={language.subline} onChange={(e) => this.onChangei18n(idx, e)} placeholder="Enter subline ..."/>
+                                        </FormGroup>
+                                    </Col>
+                                    <Col>
+                                        <FormGroup inline>
+                                            <Label for="slug">Slug</Label>
+                                            <Input type="text" name="slug" id="slug" value={language.slug} onChange={(e) => this.onChangei18n(idx, e)} placeholder="Enter slug ..."/>
+                                        </FormGroup>
+                                    </Col>
+                                </Row>
+                                <Row>
+                                    <Col>
+                                        <FormGroup inline>
+                                            <Label for="text">Text</Label>
+                                            <Input type="text" name="text" id="text" value={language.text} onChange={(e) => this.onChangei18n(idx, e)} placeholder="Enter text ..."/>
+                                        </FormGroup>
+                                    </Col>
+                                    <Col></Col>
+                                </Row>
+                                <hr/>
+                            </Container>
+                        ))
+                        }
                     </Container>
                     <Row style={{paddingTop: '30px'}}>
                         <Col>
-                            <Button onClick={this.addi18n}>Add i18n</Button>
+                            <Button onClick={this.addi18n}>New language</Button>
                         </Col>
                     </Row>
                     <h3 style={{marginTop: "60px"}}>Components</h3>
@@ -172,12 +329,15 @@ class EditNews extends React.Component {
 
 function mapState(state){
     return {
-        user: state.user.user
+        user: state.user.user,
+        news: state.news.news,
+        newsCategories: state.news.newsCategories,
+        singleNews: state.news.singleNews
     }
 }
 
 function mapActions(dispatch) {
-    return bindActionCreators({getUser, logoutUser, clearUser, loadNews, getNews, deleteNews, createNews, replace}, dispatch)
+    return bindActionCreators({getUser, logoutUser, clearUser, loadNews, getNews, deleteNews, createNews, updateNews, replace}, dispatch)
 }
 
 export default withRouter(connect(mapState, mapActions)(EditNews));

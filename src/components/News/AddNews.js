@@ -18,14 +18,13 @@ class AddNews extends React.Component {
     constructor(props) {
         super(props);
 
-        this.toggleCategory = this.toggleCategory.bind(this);
-        this.toggleStatus = this.toggleStatus.bind(this);
         this.state = {
             user: {},
             StatusDropdown: false,
             CategoryDropdown: false,
             statusDropdownValue: "draft",
             categoryDropdownValue: 22,
+            relatedNews: [""],
             allowedStatus:
                 [
                     "draft",
@@ -34,16 +33,26 @@ class AddNews extends React.Component {
                     "archived"
                 ],
             i18nComponents:
-                []
+                [
+                    {
+                    title: "",
+                    slug: "",
+                    subline: "",
+                    text: "",
+                    language: "de"
+                }
+                ],
+            langCode:
+                [
+                    "EN",
+                    "DE"
+                ]
 
 
         }
     }
 
     async componentDidMount() {
-        let c = this.state.i18nComponents;
-        c.push(<Newsi18n/>);
-        this.setState({i18nComponents: c})
     }
 
     logout = async () => {
@@ -51,17 +60,6 @@ class AddNews extends React.Component {
         this.props.clearUser();
         this.props.replace('/login');
     };
-
-    toggleStatus(){
-        this.setState(prevState => ({
-            StatusDropdown: !prevState.StatusDropdown
-        }));
-    }
-    toggleCategory(){
-        this.setState(prevState => ({
-            CategoryDropdown: !prevState.CategoryDropdown
-        }));
-    }
 
     selectStatusChange(event){
         console.log(event.currentTarget.value);
@@ -79,8 +77,29 @@ class AddNews extends React.Component {
 
     addi18n= (e) => {
         let c = this.state.i18nComponents;
-        c.push(<Newsi18n/>);
-        this.setState({i18nComponents: c})
+        if(c.length < 2) {
+            c.push({
+                title: "",
+                slug: "",
+                subline: "",
+                text: "",
+                language: c[0].language === "en" ? "de" : "en"
+            });
+            this.setState({i18nComponents: c})
+        }
+    };
+
+    selectLanguage = (id, e) => {
+        let newi18nComponents = this.state.i18nComponents;
+        newi18nComponents[id].language = e.currentTarget.value.toLowerCase();
+        this.setState({ i18nComponents: newi18nComponents })
+    };
+
+    onChangei18n = (id, e) => {
+        const { value, name } = e.target;
+        let newi18nComponents = this.state.i18nComponents;
+        newi18nComponents[id][name] = value;
+        this.setState({ i18nComponents : newi18nComponents })
     };
 
     onSubmit = async (e) => {
@@ -90,6 +109,9 @@ class AddNews extends React.Component {
         data['image'] = this.state.image;
         data['category'] = this.state.categoryDropdownValue;
         data['editorialAuthor'] = this.state.editorialAuthor;
+        data['relatedTo'] = this.state.relatedNews;
+        data['pageRef'] = this.state.pageRef;
+        data['i18n'] = this.state.i18nComponents;
 
         console.log("data", data);
 
@@ -100,6 +122,27 @@ class AddNews extends React.Component {
         } catch (e) {
             failure(e.toString());
         }
+    };
+
+    handleRelatedNewsChange = idx => evt => {
+        const newRelatedNews = this.state.relatedNews.map((related, sidx) => {
+            if (idx !== sidx) return related;
+            return evt.target.value;
+        });
+
+        this.setState({ relatedNews: newRelatedNews });
+    };
+
+    handleAddRelatedNewsholder = () => {
+        this.setState({
+            relatedNews: this.state.relatedNews.concat([""])
+        });
+    };
+
+    handleRemoveRelatedNews = idx => () => {
+        this.setState({
+            relatedNews: this.state.relatedNews.filter((s, sidx) => idx !== sidx)
+        });
     };
 
     render(){
@@ -155,14 +198,105 @@ class AddNews extends React.Component {
                         </FormGroup>
                     </Col>
                 </Row>
+                <Row>
+                    <Col>
+                        <FormGroup inline>
+                            <Label for="pageRef">Page Ref</Label>
+                            <Input type="text" name="pageRef" id="pageRef" onChange={(e) => this.handleOnChange(e)} placeholder="Enter Page Ref relative path ..." />
+                        </FormGroup>
+                    </Col>
+                    <Col>
+                        <FormGroup inline>
+                            <Label for="relatedTo">Related To</Label>
+                            {this.state.relatedNews.map((related, idx) => (
+                                <Row style={{paddingBottom: "5px"}}>
+                                    <Col style={{maxWidth: "91%"}}>
+                                    <Input
+                                        type="text"
+                                        placeholder={`Enter Related News relative path ...`}
+                                        value={related}
+                                        onChange={this.handleRelatedNewsChange(idx)}
+                                    />
+                                    </Col>
+                                    <Button
+                                        type="button"
+                                        onClick={this.handleRemoveRelatedNews(idx)}
+                                        className="small"
+                                    >
+                                        -
+                                    </Button>
+                                </Row>
+                            ))}
+                            <br/>
+                            <Button
+                                type="button"
+                                onClick={this.handleAddRelatedNewsholder}
+                                className="small"
+                            >
+                                Add Related News
+                            </Button>
+                        </FormGroup>
+                    </Col>
+                </Row>
                     <h3 style={{marginTop: "60px"}}>Internationalization</h3>
                     <hr />
                 <Container id={'i18n'} style={{padding: "0"}}>
-                    {this.state.i18nComponents}
+                    { this.state.i18nComponents.map((language, idx) => (
+                        <Container style={{padding: "0"}}>
+                    <div style={{fontWeight: "bold", padding: "30px 0"}}>Language {language.language.toUpperCase()}</div>
+                    <Row>
+                        <Col>
+                            <FormGroup inline>
+                                <Label for="language">Language Code</Label>
+                                <Input type="select" name="language" id="language" value={language.language.toUpperCase()} onChange={(e) => this.selectLanguage(idx, e)}>
+                                    {
+                                        this.state.langCode.map(lang => {
+                                            return (
+                                                <option>{lang}</option>
+                                            );
+                                        })
+                                    }
+                                </Input>
+                            </FormGroup>
+                        </Col>
+                        <Col>
+                            <FormGroup inline>
+                                <Label for="title">Title</Label>
+                                <Input type="text" name="title" id="title" onChange={(e) => this.onChangei18n(idx, e)} placeholder="Enter title ..."/>
+                            </FormGroup>
+                        </Col>
+                    </Row>
+                    <Row>
+                        <Col>
+                            <FormGroup inline>
+                                <Label for="subline">Subline</Label>
+                                <Input type="text" name="subline" id="subline" onChange={(e) => this.onChangei18n(idx, e)} placeholder="Enter subline ..."/>
+                            </FormGroup>
+                        </Col>
+                        <Col>
+                            <FormGroup inline>
+                                <Label for="slug">Slug</Label>
+                                <Input type="text" name="slug" id="slug" onChange={(e) => this.onChangei18n(idx, e)} placeholder="Enter slug ..."/>
+                            </FormGroup>
+                        </Col>
+                    </Row>
+                    <Row>
+                        <Col>
+                            <FormGroup inline>
+                                <Label for="text">Text</Label>
+                                <Input type="text" name="text" id="text" onChange={(e) => this.onChangei18n(idx, e)} placeholder="Enter text ..."/>
+                            </FormGroup>
+                        </Col>
+                        <Col></Col>
+                    </Row>
+                    <hr/>
+                        </Container>
+                        ))
+                    }
                 </Container>
                 <Row style={{paddingTop: '30px'}}>
                     <Col>
-                        <Button onClick={this.addi18n}>Add i18n</Button>
+                        <Button onClick={this.addi18n}>New language</Button>
                     </Col>
                 </Row>
                     <h3 style={{marginTop: "60px"}}>Components</h3>
