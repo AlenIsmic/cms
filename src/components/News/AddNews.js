@@ -1,6 +1,8 @@
 import React, {Fragment} from 'react';
 import {Col, Container, Dropdown, DropdownItem, DropdownMenu, DropdownToggle,
     Button, Row, Form, FormGroup, Label, Input, FormText } from "reactstrap";
+import Select from 'react-select';
+import FormControl from '@material-ui/core/FormControl';
 import * as classnames from "classnames";
 import {replace} from "connected-react-router";
 import {connect} from "react-redux";
@@ -11,7 +13,7 @@ import Newsi18n from "./Newsi18n";
 import {withRouter} from "react-router-dom";
 import withStyles from "@material-ui/core/styles/withStyles";
 import compose from "recompose/compose";
-import {success, failure} from "../../util";
+import {success, failure, isEmpty} from "../../util";
 
 class AddNews extends React.Component {
 
@@ -53,6 +55,13 @@ class AddNews extends React.Component {
     }
 
     async componentDidMount() {
+        try {
+            await this.props.loadNews();
+        }
+        catch (e) {
+            console.log(e.message);
+            failure(e.toString());
+        }
     }
 
     logout = async () => {
@@ -105,13 +114,13 @@ class AddNews extends React.Component {
     onSubmit = async (e) => {
         e.preventDefault();
         var data = {};
-        data['status'] = this.state.statusDropdownValue;
-        data['image'] = this.state.image;
-        data['category'] = this.state.categoryDropdownValue;
-        data['editorialAuthor'] = this.state.editorialAuthor;
-        data['relatedTo'] = this.state.relatedNews;
-        data['pageRef'] = this.state.pageRef;
-        data['i18n'] = this.state.i18nComponents;
+        data['status'] = isEmpty(this.state.statusDropdownValue) ? "draft" : this.state.statusDropdownValue;
+        data['image'] = isEmpty(this.state.image) ? "" : this.state.image;
+        data['category'] = isEmpty(this.state.categoryDropdownValue) ? 22 : this.state.categoryDropdownValue;
+        data['editorialAuthor'] = isEmpty(this.state.editorialAuthor) ? "" : this.state.editorialAuthor;
+        data['relatedTo'] = isEmpty(this.state.relatedNews) ? [] : this.state.relatedNews;
+        data['pageRef'] = isEmpty(this.state.pageRef) ? "" : this.state.pageRef;
+        data['i18n'] = isEmpty(this.state.i18nComponents) ? [] : this.state.i18nComponents;
 
         console.log("data", data);
 
@@ -124,25 +133,10 @@ class AddNews extends React.Component {
         }
     };
 
-    handleRelatedNewsChange = idx => evt => {
-        const newRelatedNews = this.state.relatedNews.map((related, sidx) => {
-            if (idx !== sidx) return related;
-            return evt.target.value;
-        });
-
-        this.setState({ relatedNews: newRelatedNews });
-    };
-
-    handleAddRelatedNewsholder = () => {
-        this.setState({
-            relatedNews: this.state.relatedNews.concat([""])
-        });
-    };
-
-    handleRemoveRelatedNews = idx => () => {
-        this.setState({
-            relatedNews: this.state.relatedNews.filter((s, sidx) => idx !== sidx)
-        });
+    selectRelatedNews = (selectedOptions) => {
+        this.setState({ relatedNews: selectedOptions.map((item) => {
+            return item['value'];
+        }) });
     };
 
     render(){
@@ -208,33 +202,14 @@ class AddNews extends React.Component {
                     <Col>
                         <FormGroup inline>
                             <Label for="relatedTo">Related To</Label>
-                            {this.state.relatedNews.map((related, idx) => (
-                                <Row style={{paddingBottom: "5px"}}>
-                                    <Col style={{maxWidth: "91%"}}>
-                                    <Input
-                                        type="text"
-                                        placeholder={`Enter Related News relative path ...`}
-                                        value={related}
-                                        onChange={this.handleRelatedNewsChange(idx)}
-                                    />
-                                    </Col>
-                                    <Button
-                                        type="button"
-                                        onClick={this.handleRemoveRelatedNews(idx)}
-                                        className="small"
-                                    >
-                                        -
-                                    </Button>
-                                </Row>
-                            ))}
-                            <br/>
-                            <Button
-                                type="button"
-                                onClick={this.handleAddRelatedNewsholder}
-                                className="small"
-                            >
-                                Add Related News
-                            </Button>
+                            <Select
+                                isMulti={true}
+                                onChange={this.selectRelatedNews}
+                                options={this.props.news.map((related) => {
+                                    return {"value": related.url, "label": related.url};
+                                })
+                                }
+                            />
                         </FormGroup>
                     </Col>
                 </Row>

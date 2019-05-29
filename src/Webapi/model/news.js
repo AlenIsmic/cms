@@ -11,6 +11,8 @@ export type News = {
     status: string,
     image: string,
     category: number,
+    pageRef: string,
+    relatedTo: Array<string>,
     i18n: Array<NewsI18N>
 };
 

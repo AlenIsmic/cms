@@ -2,6 +2,7 @@ import React, {Fragment} from 'react';
 import {Col, Container, Dropdown, DropdownItem, DropdownMenu, DropdownToggle,
     Button, Row, Form, FormGroup, Label, Input, FormText } from "reactstrap";
 import * as classnames from "classnames";
+import Select from 'react-select';
 import {replace} from "connected-react-router";
 import {connect} from "react-redux";
 import {getUser, logoutUser, clearUser} from "../../reducers/user";
@@ -32,6 +33,16 @@ class EditNews extends React.Component {
                     "published",
                     "archived"
                 ],
+            defaulti18nComponents:
+                [
+                    {
+                        title: "",
+                        slug: "",
+                        subline: "",
+                        text: "",
+                        language: "de"
+                    }
+                ],
             langCode:
                 [
                     "EN",
@@ -49,6 +60,13 @@ class EditNews extends React.Component {
             console.log(data);
         }
         catch(e){
+            console.log(e.message);
+            failure(e.toString());
+        }
+        try {
+            await this.props.loadNews();
+        }
+        catch (e) {
             console.log(e.message);
             failure(e.toString());
         }
@@ -154,6 +172,14 @@ class EditNews extends React.Component {
         }
     };
 
+    selectRelatedNews = (selectedOptions) => {
+        let newCurrentNews = this.state.currentNews;
+        newCurrentNews.relatedTo = selectedOptions.map((item) => {
+            return item['value'];
+        });
+        this.setState({ currentNews: newCurrentNews });
+    };
+
     render(){
         const {currentNews} = this.state;
         if(isEmpty(currentNews)){
@@ -171,7 +197,7 @@ class EditNews extends React.Component {
                         <Col>
                             <FormGroup inline>
                                 <Label for="status">Status</Label>
-                                <Input type="select" name="status" id="status" value={currentNews.status} onChange={(e) => this.selectStatusChange(e)}>
+                                <Input type="select" name="status" id="status" value={isEmpty(currentNews.status) ? "draft" : currentNews.status} onChange={(e) => this.selectStatusChange(e)}>
                                     {
                                         this.state.allowedStatus.map(status => {
                                             return (
@@ -185,7 +211,7 @@ class EditNews extends React.Component {
                         <Col>
                             <FormGroup inline>
                                 <Label for="editorialAuthor">Editorial Author</Label>
-                                <Input type="text" name="editorialAuthor" id="editorialAuthor" value={currentNews.editorialAuthor} onChange={(e) => this.handleOnChange(e)} placeholder="Enter author ..." />
+                                <Input type="text" name="editorialAuthor" id="editorialAuthor" value={isEmpty(currentNews.editorialAuthor) ? "" : currentNews.editorialAuthor} onChange={(e) => this.handleOnChange(e)} placeholder="Enter author ..." />
                             </FormGroup>
                         </Col>
                     </Row>
@@ -193,13 +219,13 @@ class EditNews extends React.Component {
                         <Col>
                             <FormGroup inline>
                                 <Label for="image">Image</Label>
-                                <Input type="text" name="image" id="image" value={currentNews.image} onChange={(e) => this.handleOnChange(e)} placeholder="Enter image's relative path ..." />
+                                <Input type="text" name="image" id="image" value={isEmpty(currentNews.image) ? "" : currentNews.image} onChange={(e) => this.handleOnChange(e)} placeholder="Enter image's relative path ..." />
                             </FormGroup>
                         </Col>
                         <Col>
                             <FormGroup inline>
                                 <Label for="category">Category</Label>
-                                <Input type="select" name="category" id="category" value={currentNews.category} onChange={(e) => this.selectCategoryChange(e)}>
+                                <Input type="select" name="category" id="category" value={isEmpty(currentNews.category) ? 22 : currentNews.category} onChange={(e) => this.selectCategoryChange(e)}>
                                     {
                                         this.props.newsCategories.map(category => {
                                             return (
@@ -215,53 +241,37 @@ class EditNews extends React.Component {
                         <Col>
                             <FormGroup inline>
                                 <Label for="pageRef">Page Ref</Label>
-                                <Input type="text" name="pageRef" id="pageRef" value={currentNews.pageRef} onChange={(e) => this.handleOnChange(e)} placeholder="Enter Page Ref relative path ..." />
+                                <Input type="text" name="pageRef" id="pageRef" value={isEmpty(currentNews.pageRef) ? "" : currentNews.pageRef} onChange={(e) => this.handleOnChange(e)} placeholder="Enter Page Ref relative path ..." />
                             </FormGroup>
                         </Col>
                         <Col>
                             <FormGroup inline>
                                 <Label for="relatedTo">Related To</Label>
-                                {currentNews.relatedTo.map((related, idx) => (
-                                    <Row style={{paddingBottom: "5px"}}>
-                                        <Col style={{maxWidth: "91%"}}>
-                                            <Input
-                                                type="text"
-                                                placeholder={`Enter Related News relative path ...`}
-                                                value={related}
-                                                onChange={this.handleRelatedNewsChange(idx)}
-                                            />
-                                        </Col>
-                                        <Button
-                                            type="button"
-                                            onClick={this.handleRemoveRelatedNews(idx)}
-                                            className="small"
-                                        >
-                                            -
-                                        </Button>
-                                    </Row>
-                                ))}
-                                <br/>
-                                <Button
-                                    type="button"
-                                    onClick={this.handleAddRelatedNewsholder}
-                                    className="small"
-                                >
-                                    Add Related News
-                                </Button>
+                                <Select
+                                    isMulti={true}
+                                    value={isEmpty(currentNews.relatedTo) ? "" : currentNews.relatedTo.map((related) => {
+                                        return {"value": related, "label": related};
+                                    })}
+                                    onChange={this.selectRelatedNews}
+                                    options={this.props.news.map((related) => {
+                                        return {"value": related.url, "label": related.url};
+                                    })
+                                    }
+                                />
                             </FormGroup>
                         </Col>
                     </Row>
                     <h3 style={{marginTop: "60px"}}>Internationalization</h3>
                     <hr />
                     <Container id={'i18n'} style={{padding: "0"}}>
-                        { currentNews.i18n.map((language, idx) => (
+                        { isEmpty(currentNews.i18n) ? [] : currentNews.i18n.map((language, idx) => (
                             <Container style={{padding: "0"}}>
                                 <div style={{fontWeight: "bold", padding: "30px 0"}}>Language {language.language.toUpperCase()}</div>
                                 <Row>
                                     <Col>
                                         <FormGroup inline>
                                             <Label for="language">Language Code</Label>
-                                            <Input type="select" name="language" id="language" value={language.language.toUpperCase()} onChange={(e) => this.selectLanguage(idx, e)}>
+                                            <Input type="select" name="language" id="language" value={isEmpty(language.language) ? "DE" : language.language.toUpperCase()} onChange={(e) => this.selectLanguage(idx, e)}>
                                                 {
                                                     this.state.langCode.map(lang => {
                                                         return (
@@ -275,7 +285,7 @@ class EditNews extends React.Component {
                                     <Col>
                                         <FormGroup inline>
                                             <Label for="title">Title</Label>
-                                            <Input type="text" name="title" id="title" value={language.title} onChange={(e) => this.onChangei18n(idx, e)} placeholder="Enter title ..."/>
+                                            <Input type="text" name="title" id="title" value={isEmpty(language.title) ? "" :language.title} onChange={(e) => this.onChangei18n(idx, e)} placeholder="Enter title ..."/>
                                         </FormGroup>
                                     </Col>
                                 </Row>
@@ -283,13 +293,13 @@ class EditNews extends React.Component {
                                     <Col>
                                         <FormGroup inline>
                                             <Label for="subline">Subline</Label>
-                                            <Input type="text" name="subline" id="subline" value={language.subline} onChange={(e) => this.onChangei18n(idx, e)} placeholder="Enter subline ..."/>
+                                            <Input type="text" name="subline" id="subline" value={isEmpty(language.subline) ? "" :language.subline} onChange={(e) => this.onChangei18n(idx, e)} placeholder="Enter subline ..."/>
                                         </FormGroup>
                                     </Col>
                                     <Col>
                                         <FormGroup inline>
                                             <Label for="slug">Slug</Label>
-                                            <Input type="text" name="slug" id="slug" value={language.slug} onChange={(e) => this.onChangei18n(idx, e)} placeholder="Enter slug ..."/>
+                                            <Input type="text" name="slug" id="slug" value={isEmpty(language.slug) ? "" :language.slug} onChange={(e) => this.onChangei18n(idx, e)} placeholder="Enter slug ..."/>
                                         </FormGroup>
                                     </Col>
                                 </Row>
@@ -297,7 +307,7 @@ class EditNews extends React.Component {
                                     <Col>
                                         <FormGroup inline>
                                             <Label for="text">Text</Label>
-                                            <Input type="text" name="text" id="text" value={language.text} onChange={(e) => this.onChangei18n(idx, e)} placeholder="Enter text ..."/>
+                                            <Input type="text" name="text" id="text" value={isEmpty(language.text) ? "" :language.text} onChange={(e) => this.onChangei18n(idx, e)} placeholder="Enter text ..."/>
                                         </FormGroup>
                                     </Col>
                                     <Col></Col>

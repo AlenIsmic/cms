@@ -5,7 +5,7 @@ import {tokenConfig} from "./util";
 
 export default {
     list: (limit, offset): Response<Array<News>> => apiClient.get("/cms/news/", tokenConfig),
-    get: (url) => apiClient.get(`/cms/news/${url}/`, tokenConfig),
+    get: (url): Response<News> => apiClient.get(`/cms/news/${url}/`, tokenConfig),
     post: (data) => apiClient.post(`/cms/news/`, data, tokenConfig),
     put: (id, data) => apiClient.put(`/cms/news/${id}/`, data, tokenConfig),
     delete: (url) => apiClient.delete(`${url}`, tokenConfig),
